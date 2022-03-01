@@ -277,19 +277,11 @@ export const WikiFilter = ({ navigation }: any) => {
                                 }
                             </GroupOptionsContainer>
                         </GroupContainer>
-
+                        
+                        {(isChecked.groups[3].activate || isChecked.groups[4].activate) ? (
                         <GroupContainer>
                             <BoldText>Grupo</BoldText>
                             <GroupOptionsContainer>
-                                {
-                                    (isChecked.groups[0].activate) ? subGroupList(isChecked, 0) : null
-                                }
-                                {
-                                    (isChecked.groups[1].activate) ? subGroupList(isChecked, 1) : null
-                                }
-                                {
-                                    (isChecked.groups[2].activate) ? subGroupList(isChecked, 2) : null
-                                }
                                 {
                                     (isChecked.groups[3].activate) ? subGroupList(isChecked, 3) : null
                                 }
@@ -298,6 +290,7 @@ export const WikiFilter = ({ navigation }: any) => {
                                 }
                             </GroupOptionsContainer>
                         </GroupContainer>
+                        ): null}
                     </FilterContainer>
                     <DefaultButton
                         text="Filtrar"
