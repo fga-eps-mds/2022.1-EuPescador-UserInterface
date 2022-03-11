@@ -25,47 +25,22 @@ export const WikiFishList = ({ fishData, type, handleNavigation }: FishListProps
     const [endPos, setEndPos] = useState(9);
     
     const loadFishData = () => {
-        console.log('entrou aqui');
-        console.log('\n');
-        console.log('\n');
-        console.log('\n');
-        console.log('\n');
         const initialPos = endPos + 1;
         
-        if((endPos + 10) < 117) {
-            console.log('oia aqui belezura');
+        if(endPos < 117) {
             setEndPos(endPos + 10);
-            console.log(endPos);
-        } else {
-            setEndPos(117);
         }
         
-        let response = [];
+        let newFishes = [];
 
-        for(let i = initialPos; i < endPos + 1; i++) {
-            response.push(fishData[i]);
+        for(let i = initialPos; i < endPos + 10; i++) {
+            if( i >= fishData.length) {
+                break;
+            }
+            newFishes.push(fishData[i]);
         }
         
-        setFishList([...response]);
-        for(let i = 0; i < fishList.length; i++) {
-            console.log(fishList[i]);
-        }
-
-        console.log('\n');
-        console.log('\n');
-        console.log('\n');
-        console.log('Initial Pos: ', initialPos);
-        console.log('End Pos: ', endPos);
-        // const response = [
-        //         fishData[initialPos],
-        //         ...fishData[endPos], 
-        // ],
-        // const repositories = await response.json();
-    
-        // setState({
-        //   data: [ ...this.state.data, ...fishData[].items ],
-        //   endPos: endPos + 9,
-        // });
+        setFishList(oldfishes => [...oldfishes, ...newFishes]);
     }
     
     const renderItem = ({ item, index } : {item: any, index: number}) => (
@@ -102,7 +77,7 @@ export const WikiFishList = ({ fishData, type, handleNavigation }: FishListProps
                 renderItem={renderItem}
                 keyExtractor={item => item._id}
                 onEndReached={loadFishData}
-                onEndReachedThreshold={0.01}
+                onEndReachedThreshold={0.05}
             />
     );
 }
