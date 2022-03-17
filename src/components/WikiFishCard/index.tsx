@@ -1,5 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Buffer } from "buffer";
+import { useIsFocused } from '@react-navigation/native';
+import { Buffer } from 'buffer';
 import { TouchableOpacity } from 'react-native';
 import {
   FishCardContainer,
@@ -62,45 +63,39 @@ export const WikiFishCard: FC<IFishCardProps> = ({
   cardFunction,
 }) => {
   const [image, setImage] = useState<string | null>(null);
-  const getPhoto = () => {
-    if (fishLog?.photo) {
-      const log64 = Buffer.from(fishLog.photo).toString('base64');
-      const base64Img = `data:image/png;base64,${log64}`;
-      return base64Img;
-    }
-    if (fishWiki?.photo) {
-      return fishWiki.photo;
-    }
-  }
+
+  const screenIsFocus = useIsFocused();
+
   useEffect(() => {
     if (fishLog?.photo) {
       const log64 = Buffer.from(fishLog.photo).toString('base64');
       const base64Img = `data:image/png;base64,${log64}`;
       setImage(base64Img);
+      // setImage(fishLog.photo);
     }
     if (fishWiki?.photo) {
       setImage(fishWiki.photo);
     }
-  }, []);
+  }, [screenIsFocus]);
   return (
-    <FishCardContainer onPress={() => { }}>
+    <FishCardContainer onPress={() => {}}>
       <TouchableOpacity onPress={cardFunction}>
-        {image ?
+        {image ? (
           <FishImage
             source={{
               uri: image,
             }}
-
-          /> :
+            resizeMode="contain"
+          />
+        ) : (
           <NoFishImage>
             <NoFishImageIcon name="no-photography" />
           </NoFishImage>
-
-        }
+        )}
         <TextView>
           <CommonNameText numberOfLines={1}>
             {fishLog ? fishLog.name : fishWiki?.commonName}
-          </CommonNameText >
+          </CommonNameText>
           <ScientificName numberOfLines={1}>
             {fishLog ? fishLog.species : fishWiki?.scientificName}
           </ScientificName>

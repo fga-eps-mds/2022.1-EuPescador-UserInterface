@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC } from 'react';
-
+import { useIsFocused } from '@react-navigation/native';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import {
   FishContainer,
@@ -67,25 +67,29 @@ export const WikiFish: FC<IFish> = ({ navigation, route }: any) => {
     }
   };
 
+  const screenIsFocus = useIsFocused();
+
   useEffect(() => {
     getFishProperties();
-  }, []);
+  }, [screenIsFocus]);
 
   return (
     <FishContainer>
-      {isLoading ? <ActivityIndicator size="large" color="#0000ff" />
-        : <ScrollView>
-          {
-            fishPhoto ?
-              <ProfileImage source={{ uri: fishPhoto }} /> :
-              <NoFishImagePhoto />
-          }
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <ScrollView>
+          {fishPhoto ? (
+            <ProfileImage source={{ uri: fishPhoto }} />
+          ) : (
+            <NoFishImagePhoto />
+          )}
 
           <DescriptionContainer>
             <Title text={fishName} />
             <HalfToneText text={fishSpecies} />
             <FishDescription>
-              <RegularText text={fishFunFact ? `"${fishFunFact}"` : ""} />
+              <RegularText text={fishFunFact ? `"${fishFunFact}"` : ''} />
             </FishDescription>
           </DescriptionContainer>
 
@@ -102,7 +106,7 @@ export const WikiFish: FC<IFish> = ({ navigation, route }: any) => {
               <PropertyContainer>
                 <Property
                   property="Tamanho Máx(cm)"
-                  value={fishMaxSize?.toString() || "-"}
+                  value={fishMaxSize?.toString() || '-'}
                 />
               </PropertyContainer>
 
@@ -111,11 +115,17 @@ export const WikiFish: FC<IFish> = ({ navigation, route }: any) => {
               </PropertyContainer>
 
               <PropertyContainer>
-                <Property property="Ameaçado?" value={fishIsThreatened || "-"} />
+                <Property
+                  property="Ameaçado?"
+                  value={fishIsThreatened || '-'}
+                />
               </PropertyContainer>
 
               <PropertyContainer>
-                <Property property="Foi indroduzido?" value={fishWasIntroduced || "-"} />
+                <Property
+                  property="Foi indroduzido?"
+                  value={fishWasIntroduced || '-'}
+                />
               </PropertyContainer>
             </PropertyColumn>
 
@@ -131,23 +141,24 @@ export const WikiFish: FC<IFish> = ({ navigation, route }: any) => {
               <PropertyContainer>
                 <Property
                   property="Peso Máx(kg)"
-                  value={fishMaxWeight?.toString() || "-"}
+                  value={fishMaxWeight?.toString() || '-'}
                 />
               </PropertyContainer>
 
               <PropertyContainer>
-                <Property property="Endêmico?" value={fishIsEndemic || "-"} />
+                <Property property="Endêmico?" value={fishIsEndemic || '-'} />
               </PropertyContainer>
 
               <PropertyContainer>
                 <Property
                   property="Faz piracema?"
-                  value={fishHasSpawningSeason || "-"}
+                  value={fishHasSpawningSeason || '-'}
                 />
               </PropertyContainer>
             </PropertyColumn>
           </ColumnContainer>
-        </ScrollView>}
+        </ScrollView>
+      )}
     </FishContainer>
   );
 };
