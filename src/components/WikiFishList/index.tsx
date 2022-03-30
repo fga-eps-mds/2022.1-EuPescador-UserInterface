@@ -54,7 +54,7 @@ export const WikiFishList = ({
           fishLog={item as IFishLog}
           cardFunction={() => {
             item._id
-              ? handleNavigation(item._id)
+              ? handleNavigation(item.id)
               : handleNavigation(index.toString());
           }}
         />
@@ -62,7 +62,7 @@ export const WikiFishList = ({
         <WikiFishCard
           fishWiki={item as IFish}
           cardFunction={() => {
-            handleNavigation(item._id);
+            handleNavigation(item.id);
           }}
         />
       )}
@@ -72,7 +72,7 @@ export const WikiFishList = ({
     <FishCardList
       data={fishList}
       renderItem={renderItem}
-      keyExtractor={item => item._id}
+      keyExtractor={item => item.id}
       onEndReached={loadFishData}
       onEndReachedThreshold={0.05}
     />
