@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
       const result = await UserLogin(email, password);
 
       await AsyncStorage.setItem('@eupescador/token', result.data.token);
-      await AsyncStorage.setItem('@eupescador/userId', result.data.id);
+      await AsyncStorage.setItem('@eupescador/userId', JSON.stringify(result.data.id));
       await AsyncStorage.setItem(
         '@eupescador/userAdmin',
         JSON.stringify(result.data.admin),
