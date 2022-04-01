@@ -30,9 +30,9 @@ export const FishLog = ({ navigation, route }: any) => {
     const [fishLargeGroup, setFishLargeGroup] = useState();
     const [fishGroup, setFishGroup] = useState();
     const [fishSpecies, setFishSpecies] = useState();
-    const [fishWeight, setFishWeight] = useState();
-    const [fishLength, setFishLength] = useState();
-    const [isAdmin, setIsAdmin] = useState<Boolean>();
+    const [fishWeight, setFishWeight] = useState<number>();
+    const [fishLength, setFishLength] = useState<number>();
+    const [isAdmin, setIsAdmin] = useState<boolean>();
     const [isLoading, setIsLoading] = useState(true);
     const [logId, setLogId] = useState("");
     const [isReviewed, setIsReviewed] = useState(false);
@@ -76,7 +76,6 @@ export const FishLog = ({ navigation, route }: any) => {
             let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
     
             let fileUri = FileSystem.documentDirectory + `registros-${date}.csv`;
-            console.log(fileUri);
             await FileSystem.writeAsStringAsync(fileUri, csvFile, { encoding: FileSystem.EncodingType.UTF8 });
             const asset = await MediaLibrary.createAssetAsync(fileUri);
             await MediaLibrary.createAlbumAsync("euPescador", asset, false);
@@ -101,7 +100,7 @@ export const FishLog = ({ navigation, route }: any) => {
       const handleExportFishlog = async () => {
         setIsLoading(true);
         try {
-          const file = await ExportFishLogs(userToken, [logId]);
+          const file: any = await ExportFishLogs(userToken, [logId]);
           saveFile(file);
         } catch (error: any) {
           console.log(error);
