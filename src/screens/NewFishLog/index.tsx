@@ -234,22 +234,56 @@ export function NewFishLog({ navigation, route }: any) {
 
   const handleCreateFishLog = async () => {
     let alertMessage = '';
+    const connection = await NetInfo.fetch();
     try {
       setIsLoading(true);
-      await createFishLog(
-        fishPhoto,
-        fishName,
-        fishLargeGroup,
-        fishGroup,
-        fishSpecies,
-        fishWeight,
-        fishLength,
-        fishLatitude,
-        fishLongitude,
-      );
+      if (connection.isConnected) {
+        await createFishLog(
+          fishPhoto,
+          fishName,
+          fishLargeGroup,
+          fishGroup,
+          fishSpecies,
+          fishWeight,
+          fishLength,
+          fishLatitude,
+          fishLongitude,
+        );
+        alertMessage = 'Registro criado com sucesso!';
+        await deleteDraft();
+      } else {
+        const userId = await AsyncStorage.getItem('@eupescador/userId');
+        const coordenates = {
+          latitude: parseFloat(fishLatitude!),
+          longitude: parseFloat(fishLongitude!),
+        };
+        const fish = {
+          userId,
+          fishPhoto,
+          name: fishName,
+          largeGroup: fishLargeGroup,
+          group: fishGroup,
+          species: fishSpecies,
+          length: parseFloat(fishLength!),
+          weight: parseFloat(fishWeight!),
+          coordenates
+        };
+        await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(fish));
+        // const response = await AsyncStorage.getItem('@eupescador/newfish');
+        // if (response) {
+        //   let listFish:Array<any> = JSON.parse(response);
+        //   listFish.push(fish);
+        //   await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
+        // } else {
+        //   let listFish = [];
+        //   listFish.push(fish);
+        //   await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
+        // };
+
+        Alert.alert('Alert', 'Salvo em cache');
+      };
+
       setIsLoading(false);
-      alertMessage = 'Registro criado com sucesso!';
-      await deleteDraft();
       const resetAction = CommonActions.reset({
         index: 0,
         routes: [{ name: 'WikiFishlogs' }],
@@ -286,7 +320,7 @@ export function NewFishLog({ navigation, route }: any) {
     }
     const connection = await NetInfo.fetch();
     setIsConnected(!!connection.isConnected);
-    if ((!!connection.isConnected)) {
+    // if ((connection.isConnected)) {
       setIsLoading(true);
       let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setIsLoading(false);
@@ -311,10 +345,10 @@ export function NewFishLog({ navigation, route }: any) {
         log_id,
         screenName: name
       })
-    }
-    else {
-      Alert.alert("Sem conexão", "Você não possui conexão atualmente e por conta disso não poderá abrir o mapa, mas não se preocupe você pode inserir as outras informações e salvar o registro como rascunho para adicionar a localização posteriormente");
-    }
+    // }
+    // else {
+    //   Alert.alert("Sem conexão", "Você não possui conexão atualmente e por conta disso não poderá abrir o mapa, mas não se preocupe você pode inserir as outras informações e salvar o registro como rascunho para adicionar a localização posteriormente");
+    // }
   }
 
   const saveDraft = async () => {
@@ -361,7 +395,7 @@ export function NewFishLog({ navigation, route }: any) {
     let text = isNew || !isAdmin ? "Enviar" : "Revisar";
     let handleButton: () => void;
     if (isNew) {
-      if (isConnected) {
+      if (true) {
         handleButton = handleCreateFishLog;
       }
       else {

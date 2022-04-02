@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userService } from '../services/userServices/userService';
 import { UserLogin } from '../services/userServices/login';
+import { createFishLog } from '../services/fishLogService/createFishLog';
+import NetInfo from '@react-native-community/netinfo';
 
 interface IAuthProvider {
   children: React.ReactNode;
@@ -73,6 +75,31 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     await AsyncStorage.removeItem('drafts');
     userService.defaults.headers.Authorization = undefined;
   }
+
+  useEffect(() => {
+    async function getFishCache() {
+      const conection = await NetInfo.fetch();
+      const response = await AsyncStorage.getItem('@eupescador/newfish');
+      const fish = JSON.parse(response!);
+      if (fish && conection.isConnected) {
+        await createFishLog(
+          fish.fishPhoto,
+          fish.name,
+          fish.largeGroup,
+          fish.group,
+          fish.species,
+          fish.weight,
+          fish.lenght,
+          fish.coordenates.latitude,
+          fish.coordenates.longitude,
+        );
+        await AsyncStorage.removeItem('@eupescador/newfish');
+      };
+    };
+
+    getFishCache();
+
+  },[]);
 
   return (
     <AuthContext.Provider

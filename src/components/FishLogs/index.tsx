@@ -63,8 +63,9 @@ export const FishLogs = (
     setIsLoading(true);
 
     try {
-      const data = await GetAllFishLogs(token, filterQuery);
-
+      let data = await GetAllFishLogs(token, filterQuery);
+      const offlineRegister = await AsyncStorage.getItem('@eupescador/newfish');
+      data.push(JSON.parse(offlineRegister!));
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
