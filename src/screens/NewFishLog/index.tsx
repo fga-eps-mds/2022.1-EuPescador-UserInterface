@@ -118,7 +118,7 @@ export function NewFishLog({ navigation, route }: any) {
   const getFishLogProperties = async (token: string) => {
     try {
       const { log_id } = route.params;
-      const log = await GetOneFishLog(log_id, token);
+      const log: any = await GetOneFishLog(log_id, token);
       if (log.photo) {
         const log64 = Buffer.from(log.photo).toString('base64');
         setFishPhoto(log64);
@@ -206,8 +206,7 @@ export function NewFishLog({ navigation, route }: any) {
         routes: [{ name: 'WikiFishlogs' }],
       });
       navigation.dispatch(resetAction);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       if (error.response.status === 400)
         alertTitle = 'Sem informação'
       alertMessage = error.response.data.message;
@@ -422,8 +421,8 @@ export function NewFishLog({ navigation, route }: any) {
 
   const nameList = () => {
     return fishes.filter((item) => {
-      if (item.commonName.toLowerCase().includes(fishName.toLowerCase().trim())
-        && item.commonName.toLowerCase() != fishName.toLowerCase().trim()
+      if (item.commonName.toLowerCase().includes(fishName!.toLowerCase().trim())
+        && item.commonName.toLowerCase() != fishName!.toLowerCase().trim()
       ) {
         if (fishGroup) {
           if (item.group.toLowerCase().includes(fishGroup.toLowerCase())) {

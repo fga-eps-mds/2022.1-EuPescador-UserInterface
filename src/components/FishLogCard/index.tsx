@@ -13,7 +13,7 @@ import {
 } from './styles';
 
 export interface IFishLog {
-  _id: string;
+  id: string;
   family?: string;
   userId: number;
   name: string;
