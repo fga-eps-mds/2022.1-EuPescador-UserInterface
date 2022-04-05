@@ -80,21 +80,27 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     async function getFishCache() {
       const conection = await NetInfo.fetch();
       const response = await AsyncStorage.getItem('@eupescador/newfish');
-      const fish = JSON.parse(response!);
-      if (fish && conection.isConnected) {
-        await createFishLog(
-          fish.fishPhoto,
-          fish.name,
-          fish.largeGroup,
-          fish.group,
-          fish.species,
-          fish.weight,
-          fish.lenght,
-          fish.coordenates.latitude,
-          fish.coordenates.longitude,
-        );
-        await AsyncStorage.removeItem('@eupescador/newfish');
-      };
+      if (response) {
+        let fish = [];
+        fish = JSON.parse(response);
+        if (conection.isConnected) {
+
+          for (let i = 0; i < fish.length; i++) {
+            await createFishLog(
+              fish[i].fishPhoto,
+              fish[i].name,
+              fish[i].largeGroup,
+              fish[i].group,
+              fish[i].species,
+              fish[i].weight,
+              fish[i].lenght,
+              fish[i].coordenates.latitude,
+              fish[i].coordenates.longitude,
+            );
+          }
+          await AsyncStorage.removeItem('@eupescador/newfish');
+        };
+      }
     };
 
     getFishCache();
