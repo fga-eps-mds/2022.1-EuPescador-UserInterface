@@ -268,17 +268,18 @@ export function NewFishLog({ navigation, route }: any) {
           weight: parseFloat(fishWeight!),
           coordenates
         };
-        await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(fish));
-        // const response = await AsyncStorage.getItem('@eupescador/newfish');
-        // if (response) {
-        //   let listFish:Array<any> = JSON.parse(response);
-        //   listFish.push(fish);
-        //   await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
-        // } else {
-        //   let listFish = [];
-        //   listFish.push(fish);
-        //   await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
-        // };
+
+        const response = await AsyncStorage.getItem('@eupescador/newfish');
+
+        let listFish = [];
+        if (response) {
+          listFish = JSON.parse(response);
+          listFish.push(fish);
+          await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
+        } else {
+          listFish.push(fish);
+          await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
+        };
 
         Alert.alert('Alert', 'Salvo em cache');
       };
@@ -418,9 +419,9 @@ export function NewFishLog({ navigation, route }: any) {
     const connection = await NetInfo.fetch();
     const hasConnection = !!connection.isConnected;
     setIsConnected(hasConnection);
-    if (hasConnection) {
-      getFishOptions();
-    }
+    // if (hasConnection) {
+    // }
+    getFishOptions();
     const { data, isNewRegister, isFishLogDraft, fishLogDraftId } = route.params;
     setIsNew(isNewRegister);
     if (data != null) {
@@ -448,9 +449,9 @@ export function NewFishLog({ navigation, route }: any) {
         getData();
       }
     }
-    if (!hasConnection)
-      Alert.alert("Sem conexão", "Você está conexão, logo algumas ações dentro de criação e edição serão limitadas.")
-      setIsLoading(false);
+    // if (!hasConnection)
+    //   Alert.alert("Sem conexão", "Você está conexão, logo algumas ações dentro de criação e edição serão limitadas.")
+    setIsLoading(false);
   }
 
   const nameList = () => {
@@ -492,7 +493,7 @@ export function NewFishLog({ navigation, route }: any) {
     loadData();
   }, [route.params]);
 
-
+  // Carregar Grande Grupo (Dropdown)
   const largeGroupList = () => {
     let fishesLargeGroup = fishes.map((item) => item.largeGroup);
     fishesLargeGroup = [...new Set(fishesLargeGroup)];
@@ -509,6 +510,7 @@ export function NewFishLog({ navigation, route }: any) {
     });
   };
 
+  // Carregar Grupo (Dropdown)
   const groupList = () => {
     const filteredGroupFishes = fishes.filter((item) => {
       if (fishLargeGroup) {
