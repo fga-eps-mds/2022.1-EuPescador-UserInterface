@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import {CheckBox} from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
 import {
   ButtonView,
   Container,
@@ -36,7 +37,6 @@ import { DraftButton } from '../DraftButton';
 import { FilterButton } from '../FilterButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 interface Props {
   token: string;
   isAdmin: boolean;
@@ -58,14 +58,23 @@ export const FishLogs = (
   const [isExportMode, setIsExportMode] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
 
+  const connection = NetInfo.useNetInfo();
 
   const getFishLogs = async () => {
     setIsLoading(true);
 
     try {
       let data = await GetAllFishLogs(token, filterQuery);
-      const offlineRegister = await AsyncStorage.getItem('@eupescador/newfish');
-      data.push(JSON.parse(offlineRegister!));
+      const offlineRegisterArray = await AsyncStorage.getItem('@eupescador/newfish');
+      let fishesInCache = [];
+      if (offlineRegisterArray) {
+        fishesInCache = JSON.parse(offlineRegisterArray);
+
+        for (let i = 0; i < fishesInCache.length; i++) {
+          data.push(fishesInCache[i]);
+        }
+      }
+      console.log(data);
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
@@ -80,11 +89,20 @@ export const FishLogs = (
       setHasDraft(drafts != '[]');
   }
 
-  const handleNavigation = (id: string) => {
+  const handleNavigationOnline = (id: string) => {
     navigation.navigate(
       'FishLog' as never,
       {
         log_id: id,
+      } as never,
+    );
+  };
+
+  const handleNavigationOffline = (fish: IFishLog) => {
+    navigation.navigate(
+      'FishLog' as never,
+      {
+        fish
       } as never,
     );
   };
@@ -151,6 +169,7 @@ export const FishLogs = (
       console.log(exportList);
       const file: any = await ExportFishLogs(token, exportList);
       saveFile(file);
+      
     } catch (error: any) {
       console.log(error);
       Alert.alert("Exportar Registros", "Falha ao exportar registros", [
@@ -160,7 +179,6 @@ export const FishLogs = (
       ])
     }
   };
-
 
   const addExportList = (logId: string) => {
     setExportList(arr => [...arr, logId]);
@@ -187,7 +205,6 @@ export const FishLogs = (
               navigation={navigation}
               screen='LogFilter'
             />
-
             {
               isAdmin ? (
                 <ButtonView>
@@ -245,7 +262,7 @@ export const FishLogs = (
                     fishLog={item}
                     isHidden={!isExportMode}
                     cardFunction={() => {
-                      handleNavigation(item.id);
+                      connection.isConnected ? handleNavigationOnline(item.id) : handleNavigationOffline(item)
                     }}
                     selectFunction={() => {
                       addExportList(item.id);
