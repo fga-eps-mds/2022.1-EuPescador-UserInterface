@@ -4,16 +4,24 @@ import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 import { DefaultButton } from "../../components/Button";
 
+export const Container = styled.View`
+  flex: 1;
+  width: 100%;
+  padding-left: ${RFValue(8, 640)}px;
+`;
+
 export const MapContainer = styled.View`
     flex: 1;
     background-color: white;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height:40%;
 `
 
 export const Map = styled(MapView)`
-    width: ${Dimensions.get('window').width}px;
-    height: ${Dimensions.get('window').height}px;
+    width: 100%;
+    height:100%;
 `
 
 export const MapInfoView = styled.View`
