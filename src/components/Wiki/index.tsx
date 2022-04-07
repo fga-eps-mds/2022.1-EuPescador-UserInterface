@@ -26,6 +26,7 @@ export const Wiki = (
 
   const updateFishes = async () => {
     try {
+      console.log(filterQuery)
       const data = await GetWikiFishes(filterQuery);
       setFishes(data);
     } catch (error: any) {

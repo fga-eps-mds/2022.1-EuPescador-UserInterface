@@ -12,67 +12,84 @@ import { CommonActions } from '@react-navigation/native';
 
 
 
-export const LogsMap = ({ navigation,isAdmin ,token, filterQuery }: any) => {
-
+export const LogsMap = ({latitude, longitude,token, navigation,isAdmin ,filterQuery }: any) => {
+  
 
   const [wiki, setWiki] = useState(true);
   const [register, setRegister] = useState(false);
   const [isLogged, setIsLogged] = useState<boolean>();
   const [showModal, setShowModal] = useState(false);
-  const { signOut } = useAuth();
-  const [fishLatitude, setFishLatitude] = useState<any | null>();
-  const [fishLongitude, setFishLongitude] = useState<any | null>();
+  const { signOut } = useAuth(); 
 
-  const [mark, setMark] = useState<LatLng>({
-    latitude: fishLatitude,
-    longitude: fishLongitude,
+
+  const [mark, setMark] = useState<any>({
+    latitude: latitude,
+    longitude: longitude,
   });
   const [fishLogs, setFishLogs] = useState<IFishLog[]>([]);
 
+  
+
   useEffect(() => {
+
+    
+
     async function updateFishLogs() {
       const data = await GetAllFishLogs(token, filterQuery);
+    
+      //console.log(data)
       setFishLogs(data as IFishLog[]);
     }
     updateFishLogs();
   }, [token, filterQuery]);
  
-  async function getPosition() {
-      let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      setFishLatitude(loc.coords.latitude);
-      setFishLongitude(loc.coords.longitude);
-  }
-
-    getPosition();
 
 
-  const handleDrag = (e: MapEvent) => {
-    setMark(e.nativeEvent.coordinate);
-  };
+
+  // const handleDrag = (e: MapEvent) => {
+  //   setMark(e.nativeEvent.coordinate);
+  // };
   return (
     <Container>
       <MapContainer>
         <Map
           initialRegion={{
-            latitude: fishLatitude,
-            longitude: fishLongitude,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 0.0300022,
             longitudeDelta: 0.0000121,
           }}
-          onPress={handleDrag}
+
+          
         >
-          {/* <Marker coordinate={mark} />
-          {fishLogs.map(log => {
-            return (
-              <Circle
-                center={{
-                  latitude: log.coordenates[0][0],
-                  longitude: log.coordenates[0][1],
-                }}
-                radius={1000}
-              />
+  
+         
+       {fishLogs.map(log => {
+         //setMark(log.coordenates[0])
+          return (
+            console.log(log.coordenates),
+            //console.log(log.coordenates.longitude)
+            <Marker
+            coordinate={{
+            latitude:log.coordenates.latitude,
+            longitude:log.coordenates.longitude
+            }}
+          />
+          
+         
             );
-          })} */}
+            
+          })
+          }
+
+  {// <Circle
+            //   center={{
+            //     latitude: log.coordenates[0][0],
+            //     longitude: log.coordenates[0][0],
+            //   }}
+            //   radius={1000}
+            // />
+          }
         </Map>
         {isAdmin}
         {/* <MapInfoView>

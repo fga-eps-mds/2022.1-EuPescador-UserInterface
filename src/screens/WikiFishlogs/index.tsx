@@ -5,6 +5,7 @@ import { CommonActions } from '@react-navigation/native';
 import { TopBar } from '../../components/TopBar';
 import { Wiki } from '../../components/Wiki';
 import { FishLogs } from '../../components/FishLogs';
+import * as Location from 'expo-location';
 import {
   PageContainer,
   TitleContainer,
@@ -27,6 +28,8 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
   const [isLogged, setIsLogged] = useState<boolean>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [showModal, setShowModal] = useState(false);
+  const [fishLatitude, setFishLatitude] = useState<any>();
+  const [fishLongitude, setFishLongitude] = useState<any>();
   const { signOut } = useAuth();
 
   const getData = async () => {
@@ -73,6 +76,14 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
       await AsyncStorage.setItem('hasAcessTheApp', 'true');
     }
   }
+
+  const getPosition = async ()=>{
+    let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+    setFishLatitude(loc.coords.latitude);
+    setFishLongitude(loc.coords.longitude);
+  }
+
+  
 
   useEffect(() => {
     getData();
@@ -129,11 +140,13 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
               <TouchableTitle
                 onPress={() => {
                   setWiki(false);
-                  setRegister(false)
+                  setRegister(false);
+                  getPosition();
                 }}
               >
                 <TitleText wiki={!wiki} register={!register}>Mapa</TitleText>
                 {wiki ? null : (!register ? <TitleHighlight/> : null )}
+              
               </TouchableTitle>
 
 
@@ -155,7 +168,10 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
               isAdmin={isAdmin ? isAdmin : false}
               filterQuery={(route.params && route.params.logFilterQuery) ? route.params.logFilterQuery : null}
             />):
+            
             <LogsMap
+              latitude = {fishLatitude}
+              longitude = {fishLongitude}
               token={token} 
               navigation={navigation}
               isAdmin={isAdmin ? isAdmin : false}
