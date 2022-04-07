@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
 import {CheckBox} from 'react-native-elements';
 import {
   ButtonView,
@@ -58,6 +57,7 @@ export const FishLogs = (
   const [isExportMode, setIsExportMode] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
 
+  const {StorageAccessFramework} = FileSystem
 
   const getFishLogs = async () => {
     setIsLoading(true);
@@ -113,37 +113,43 @@ export const FishLogs = (
   };
 
 
-  const saveFile = async (txtFile: string) => {
-    setIsLoading(true);
-    try {
-      const res = await MediaLibrary.requestPermissionsAsync()
+  const saveFile = async (csvFile: string) => {
+  setIsLoading(true);
+  try {
+    const res = await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-      if (res.granted) {
-        let today = new Date();
-        let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
+    console.log('STATUS:', res.granted);
 
-        let fileUri = FileSystem.documentDirectory + `registros-${date}.txt`;
-        await FileSystem.writeAsStringAsync(fileUri, txtFile);
-        const asset = await MediaLibrary.createAssetAsync(fileUri);
-        await MediaLibrary.createAlbumAsync("euPescador", asset, false);
+    if (res.granted) {
+      let today = new Date();
+      let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
+      let filename = `registros-${date}.txt`
+      let directoryUri = res.directoryUri;
+      await StorageAccessFramework.createFileAsync(directoryUri, filename, "application/txt")
+        .then(async(fileUri) => {
+          await FileSystem.writeAsStringAsync(fileUri, csvFile, { encoding: FileSystem.EncodingType.UTF8 });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
 
-        handleExport();
-        Alert.alert("Exportar Registros", "Registros exportados com sucesso. Você pode encontrar o arquivo em /Pictures/euPescador", [
-          {
-            text: "Ok",
-          }
-        ])
-      }
-    } catch (error: any) {
-      console.log(error);
-      Alert.alert("Exportar Registros", "Falha ao exportar registros", [
+      handleExport();
+      Alert.alert("Exportar Registros", "Registro(s) exportado(s) com sucesso!", [
         {
           text: "Ok",
         }
       ])
     }
-    setIsLoading(false);
-  };
+  } catch (error: any) {
+    console.log(error);
+    Alert.alert("Exportar Registros", "Falha ao exportar registro(s)!", [
+      {
+        text: "Ok",
+      }
+    ])
+  }
+  setIsLoading(false);
+};
 
   const handleExportSelected = async () => {
     try {
