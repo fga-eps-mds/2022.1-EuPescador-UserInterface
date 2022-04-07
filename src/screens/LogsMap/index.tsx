@@ -74,6 +74,7 @@ export const LogsMap = ({latitude, longitude,token, navigation,isAdmin ,filterQu
             latitude:log.coordenates.latitude,
             longitude:log.coordenates.longitude
             }}
+            title={log.name}
           />
           
          
