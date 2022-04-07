@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "pro-especies-user-interface",
-    "slug": "pro-especies-user-interface",
+    "name": "EuPescador",
+    "slug": "EuPescador",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eupescador.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
