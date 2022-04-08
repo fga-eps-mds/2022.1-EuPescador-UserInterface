@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { FishWiki } from '../../interfaces/FishWiki';
 import { WikiFishCard, IFish, IFishLog } from '../WikiFishCard';
 import { FishCardList } from './styles';
 
 interface FishListProps {
-  fishData: IFishLog[] | IFish[];
+  fishData: IFishLog[] | IFish[] | FishWiki[];
   type: 'fishWiki' | 'fishLog';
   handleNavigation: (id: string) => void;
 }
@@ -35,7 +36,7 @@ export const WikiFishList = ({
       setEndPos(endPos + 10);
     }
 
-    const newFishes = [];
+    const newFishes: any = [];
 
     for (let i = initialPos; i < endPos + 10; i++) {
       if (i >= fishData.length) {
@@ -54,15 +55,15 @@ export const WikiFishList = ({
           fishLog={item as IFishLog}
           cardFunction={() => {
             item._id
-              ? handleNavigation(item._id)
+              ? handleNavigation(item.id)
               : handleNavigation(index.toString());
           }}
         />
       ) : (
         <WikiFishCard
-          fishWiki={item as IFish}
+          fishWiki={item as FishWiki}
           cardFunction={() => {
-            handleNavigation(item._id);
+            handleNavigation(item.id);
           }}
         />
       )}
@@ -72,7 +73,7 @@ export const WikiFishList = ({
     <FishCardList
       data={fishList}
       renderItem={renderItem}
-      keyExtractor={item => item._id}
+      keyExtractor={item => item.id}
       onEndReached={loadFishData}
       onEndReachedThreshold={0.05}
     />

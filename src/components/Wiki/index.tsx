@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { IFish } from '../FishLogCard';
+import { FishWiki } from '../../interfaces/FishWiki';
 import { GetWikiFishes } from '../../services/wikiServices/getWikiFishes';
 import { FilterButton } from '../FilterButton';
 import {
@@ -21,7 +21,7 @@ export const Wiki = (
   }: any
 ) => {
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [fishes, setFishes] = useState<IFish[]>([]);
+  const [fishes, setFishes] = useState<FishWiki[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const updateFishes = async () => {
@@ -69,13 +69,13 @@ export const Wiki = (
               screen='WikiFilter'
             />
           </RowContainer>
-          {fishes.filter(fish => {
+          {fishes && fishes.length > 0 && fishes.filter(fish => {
             if (
               !searchQuery ||
-              fish.commonName
+              fish.commonName!
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase().trim()) ||
-              fish.scientificName
+              fish.scientificName!
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase().trim())
             ) {
@@ -83,13 +83,14 @@ export const Wiki = (
             }
           }).length ? (
             <WikiFishList
-              fishData={fishes.filter(item => {
+              fishData={
+                fishes.filter(item => {
                 if (
                   !searchQuery ||
-                  item.commonName
+                  item.commonName!
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase().trim()) ||
-                  item.scientificName
+                  item.scientificName!
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase().trim())
                 ) {

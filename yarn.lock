@@ -2046,15 +2046,16 @@
     "wcwidth" "^1.0.1"
 
 "@react-native-community/netinfo@6.0.0":
-<<<<<<< HEAD
+
   "integrity" "sha512-Z9M8VGcF2IZVOo2x+oUStvpCW/8HjIRi4+iQCu5n+PhC7OqCQX58KYAzdBr///alIfRXiu6oMb+lK+rXQH1FvQ=="
   "resolved" "https://registry.npmjs.org/@react-native-community/netinfo/-/netinfo-6.0.0.tgz"
   "version" "6.0.0"
-=======
+
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-6.0.0.tgz#2a4d7190b508dd0c2293656c9c1aa068f6f60a71"
   integrity sha512-Z9M8VGcF2IZVOo2x+oUStvpCW/8HjIRi4+iQCu5n+PhC7OqCQX58KYAzdBr///alIfRXiu6oMb+lK+rXQH1FvQ==
->>>>>>> 46a29b2cab30bb2f4a7f46186e1c1c2031d1013e
+
+
 
 "@react-navigation/core@^6.1.0":
   "integrity" "sha512-LyZqD/ZCXSK9+ES8KiH+0tU+7aL84jUw1N9OxZfEuns/OcnSXKC3sOO+9NQ9XRowB1wLUfJhmqZ8G8rUlg33fQ=="
@@ -4554,7 +4555,7 @@
   "version" "12.1.2"
   dependencies:
     "@expo/config-plugins" "^3.0.0"
-<<<<<<< HEAD
+
     "expo-modules-core" "~0.2.0"
 
 "expo-modules-autolinking@^0.0.3":
@@ -4582,35 +4583,7 @@
   "integrity" "sha512-WycJfWaBuj/W9KSgYTUHjm90VkwZ0Pv/EIqh2pW4/zw10AoSLHVgVA0CoC5R944iE42m6KWioax/0ydHU61qzA=="
   "resolved" "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.11.4.tgz"
   "version" "0.11.4"
-=======
-    expo-modules-core "~0.2.0"
 
-expo-modules-autolinking@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-0.0.3.tgz#45ba8cb1798f9339347ae35e96e9cc70eafb3727"
-  integrity sha512-azkCRYj/DxbK4udDuDxA9beYzQTwpJ5a9QA0bBgha2jHtWdFGF4ZZWSY+zNA5mtU3KqzYt8jWHfoqgSvKyu1Aw==
-  dependencies:
-    chalk "^4.1.0"
-    commander "^7.2.0"
-    fast-glob "^3.2.5"
-    find-up "~5.0.0"
-    fs-extra "^9.1.0"
-
-expo-modules-core@~0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-0.2.0.tgz#68e5b6e53d0afbf8d131578831aed657589a2d42"
-  integrity sha512-inpfZ5X/BaTtbj2wG9PA9AC0MN8VyId6KSRlVuEg7+ziurHBy/kKDFxpOddUokhwiln2uhoYPSStJjR/tKypdw==
-
-expo-network@~3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/expo-network/-/expo-network-3.2.0.tgz#3329d37e9b4f5fbfc158e8fc7f3d440331bdcd35"
-  integrity sha512-a1nwP3mwYLQmOiUUG3wmSn7auWy7pXCjqriu4+QsH3Fhkcr9OA0XnPSMEDiDM5rQeuZq//q+JndKCHRYzV6YKw==
-
-expo-splash-screen@~0.11.2:
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.11.4.tgz#fe474748c132ed2e45f477b882e2cf8735d9db98"
-  integrity sha512-WycJfWaBuj/W9KSgYTUHjm90VkwZ0Pv/EIqh2pW4/zw10AoSLHVgVA0CoC5R944iE42m6KWioax/0ydHU61qzA==
->>>>>>> 46a29b2cab30bb2f4a7f46186e1c1c2031d1013e
   dependencies:
     "@expo/configure-splash-screen" "0.5.0"
     "@expo/prebuild-config" "^2.0.0"

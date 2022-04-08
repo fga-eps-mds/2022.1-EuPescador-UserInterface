@@ -91,8 +91,8 @@ export const FishLogs = (
     setIsCheck(value);
     if (value) {
       fishLog.forEach((item) => {
-        if (!exportList.includes(item._id)) {
-          setExportList(arr => [...arr, item._id]);
+        if (!exportList.includes(item.id)) {
+          setExportList(arr => [...arr, item.id]);
         }
       });
     } else {
@@ -147,7 +147,7 @@ export const FishLogs = (
   const handleExportSelected = async () => {
     try {
       console.log(exportList);
-      const file = await ExportFishLogs(token, exportList);
+      const file: any = await ExportFishLogs(token, exportList);
       saveFile(file);
     } catch (error: any) {
       console.log(error);
@@ -243,17 +243,17 @@ export const FishLogs = (
                     fishLog={item}
                     isHidden={!isExportMode}
                     cardFunction={() => {
-                      handleNavigation(item._id);
+                      handleNavigation(item.id);
                     }}
                     selectFunction={() => {
-                      addExportList(item._id);
+                      addExportList(item.id);
                     }}
                     deselectFunction={() => {
-                      removeExportList(item._id);
+                      removeExportList(item.id);
                     }}
                   />
                 )}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item.id}
               />
             ) : (
               filterQuery ? (
