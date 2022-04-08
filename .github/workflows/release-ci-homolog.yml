@@ -2,8 +2,8 @@ name: Generate Pre-Release
 
 on:
   push:
-    branches:
-      - devel
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -15,16 +15,10 @@ jobs:
           distribution: 'zulu'
           java-version: '8'
 
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v5.6
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set filename
         id: report
         run: |
-          echo "::set-output name=report_file_name::fga-eps-mds-${{ github.event.repository.name }}-$(TZ='America/Sao_Paulo' date +'%m-%d-%Y-%H-%M-%S')-${{ steps.tag_version.outputs.new_tag }}"
+          echo "::set-output name=report_file_name::fga-eps-mds-${{ github.event.repository.name }}-$(TZ='America/Sao_Paulo' date +'%m-%d-%Y-%H:%M:%S')-${{ github.ref_name }}"
       - name: Get SonarCloud metrics
         run: |
           wget $SONAR_URL -O ${{ steps.report.outputs.report_file_name }}.json
@@ -47,8 +41,8 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body: ${{ steps.tag_version.outputs.changelog }}
           prerelease: true
           artifacts: |
