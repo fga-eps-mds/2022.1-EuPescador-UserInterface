@@ -23,7 +23,7 @@ export const createFishLog = async (
   };
 
   if (photoString) {
-    photo = Buffer.from(photoString, 'base64');
+    photo = photoString;
   }
 
   await fishLogService.post(

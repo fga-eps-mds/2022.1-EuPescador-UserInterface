@@ -60,6 +60,25 @@ export const FishLogs = (
 
   const connection = NetInfo.useNetInfo();
 
+  const loadFishesLogsOffline = async () => {
+    let allFishesLogs = await AsyncStorage.getItem('@eupescador/allFishesLogs');
+    if (allFishesLogs) {
+      let fishesLogs = JSON.parse(allFishesLogs);
+
+      const newFishesLogs = await AsyncStorage.getItem('@eupescador/newfish');
+
+      if (newFishesLogs) {
+        let fishesUnSave = [];
+        fishesUnSave = JSON.parse(newFishesLogs);
+
+        for (let i = 0; i < fishesUnSave.length; i++) {
+          fishesLogs.push(fishesUnSave[i]);
+        }
+      }
+      setFishLog(fishesLogs.reverse());
+    }
+  }
+
   const getFishLogs = async () => {
     setIsLoading(true);
 
@@ -74,7 +93,7 @@ export const FishLogs = (
           data.push(fishesInCache[i]);
         }
       }
-      console.log(data);
+      await AsyncStorage.setItem('@eupescador/allFishesLogs', JSON.stringify(data));
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
@@ -189,8 +208,20 @@ export const FishLogs = (
   };
 
   useEffect(() => {
-    getFishLogs();
-    getDrafts();
+    async function isOnline() {
+      const con = await NetInfo.fetch();
+      console.log('CON:', con.isConnected);
+
+      if (con.isConnected) {
+        getFishLogs();
+        getDrafts();
+      } else {
+        setIsLoading(false);
+        loadFishesLogsOffline();
+      }
+    }
+
+    isOnline();
   }, []);
 
   return (
@@ -261,8 +292,14 @@ export const FishLogs = (
                     selectAll={isCheck}
                     fishLog={item}
                     isHidden={!isExportMode}
-                    cardFunction={() => {
-                      connection.isConnected ? handleNavigationOnline(item.id) : handleNavigationOffline(item)
+                    cardFunction={async () => {
+                      await NetInfo.fetch().then(status => {
+                        if (status.isConnected) {
+                          handleNavigationOnline(item.id);
+                        } else {
+                          handleNavigationOffline(item);
+                        }
+                      })
                     }}
                     selectFunction={() => {
                       addExportList(item.id);
