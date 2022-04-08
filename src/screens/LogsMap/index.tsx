@@ -47,8 +47,32 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
           maxZoomLevel={14.8}
           
         >
+          {
+            isAdmin ? (
+              
+
+              fishLogs.map(log => {
+                if(log.reviewed){
+                return (
+                  <Marker
+                    coordinate={{
+                      latitude: log.coordenates.latitude,
+                      longitude: log.coordenates.longitude
+                    }}
+                    title={log.name}
+                    description={log.group}
+                  />
+                )
+                  }else{
+                    return
+                  }
+
+              })
+
+            ) :
+         
             
-              {fishLogs.map(log => {
+              fishLogs.map(log => {
                 if(log.reviewed){
                   return (         
                     
@@ -60,7 +84,10 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
                             }}
                             title={log.name}
                             description={log.group}
-                             
+                            
+                            
+                            
+                            //image={require('../../assets/fish.png')}  
 
                             image={{
                               uri: Imagem.resolveAssetSource(
@@ -77,7 +104,7 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
 
                   }
             )
-                }
+    }
         </Map> 
         
       </MapContainer>
