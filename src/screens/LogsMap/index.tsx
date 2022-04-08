@@ -1,133 +1,118 @@
 import React, { useEffect, useState } from 'react';
-import { Marker, MapEvent, LatLng, Circle } from 'react-native-maps';
-import { Map, MapContainer } from './styles';
-import { DefaultButton } from '../../components/Button';
+import MapView, { Marker, Circle} from 'react-native-maps';
+import {  Map, MapContainer } from './styles';
 import { GetAllFishLogs } from '../../services/fishLogService/getAllLogs';
 import { IFishLog } from '../../components/FishLogCard';
 import * as Location from 'expo-location';
+import { Alert, Image } from "react-native";
 import { Container } from './styles';
 import { useAuth } from '../../contexts/authContext';
-import { Alert } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
+import { Overlay, Text } from 'react-native-elements';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Imagem } from './styles';
+import { ScreenWidth } from 'react-native-elements/dist/helpers';
 
+export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, token, navigation, isAdmin, filterQuery }: any) => {
 
-
-export const LogsMap = ({latitude, longitude,token, navigation,isAdmin ,filterQuery }: any) => {
-  
-
-  const [wiki, setWiki] = useState(true);
-  const [register, setRegister] = useState(false);
-  const [isLogged, setIsLogged] = useState<boolean>();
-  const [showModal, setShowModal] = useState(false);
-  const { signOut } = useAuth(); 
-
-
-  const [mark, setMark] = useState<any>({
-    latitude: latitude,
-    longitude: longitude,
-  });
+  const { signOut } = useAuth();
   const [fishLogs, setFishLogs] = useState<IFishLog[]>([]);
-
   
+  async function updateFishLogs() {
+    const data = await GetAllFishLogs(token, filterQuery);
 
+    setFishLogs(data as IFishLog[]);
+    
+  }
+    
   useEffect(() => {
-
-    
-
-    async function updateFishLogs() {
-      const data = await GetAllFishLogs(token, filterQuery);
-    
-      //console.log(data)
-      setFishLogs(data as IFishLog[]);
-    }
     updateFishLogs();
-  }, [token, filterQuery]);
- 
-
-
+    
+    
+  }, []);
+    
+  
 
   // const handleDrag = (e: MapEvent) => {
   //   setMark(e.nativeEvent.coordinate);
   // };
   return (
+    
     <Container>
-      <MapContainer>
+      <MapContainer >
+        
+        
         <Map
           initialRegion={{
             latitude: latitude,
             longitude: longitude,
-            latitudeDelta: 0.0300022,
-            longitudeDelta: 0.0000121,
-          }}
-
+            latitudeDelta: latitudeDelta,
+            longitudeDelta: longitudeDelta,
+          }
+          }
+          maxZoomLevel={14.8}
           
         >
-  
+          {
+            isAdmin ? (
+              
+
+              fishLogs.map(log => {
+                if(log.reviewed){
+                return (
+                  <Marker
+                    coordinate={{
+                      latitude: log.coordenates.latitude,
+                      longitude: log.coordenates.longitude
+                    }}
+                    title={log.name}
+                    description={log.group}
+                  />
+                )
+                  }else{
+                    return
+                  }
+
+              })
+
+            ) :
          
-       {fishLogs.map(log => {
-         //setMark(log.coordenates[0])
-          return (
-            console.log(log.coordenates),
-            //console.log(log.coordenates.longitude)
-            <Marker
-            coordinate={{
-            latitude:log.coordenates.latitude,
-            longitude:log.coordenates.longitude
-            }}
-          />
-          
-         
-            );
             
-          })
-          }
+              fishLogs.map(log => {
+                if(log.reviewed){
+                  return (         
+                    
+                        <Marker
+                            coordinate={{
+                            latitude: log.coordenates.latitude,
+                            longitude: log.coordenates.longitude,
+                            
+                            }}
+                            title={log.name}
+                            description={log.group}
+                            
+                            
+                            
+                            //image={require('../../assets/fish.png')}  
 
-  {// <Circle
-            //   center={{
-            //     latitude: log.coordenates[0][0],
-            //     longitude: log.coordenates[0][0],
-            //   }}
-            //   radius={1000}
-            // />
-          }
-        </Map>
-        {isAdmin}
-        {/* <MapInfoView>
-          <MapInstructions>
-            <MapInstructionsText>
-              Clique no mapa para marcar o local onde pegou o peixe
-            </MapInstructionsText>
-          </MapInstructions>
-          <LocationUsageInfoView>
-            <LocationUsageInfoContainer>
-              <LocationUsageInfoTitle>
-                Por que precisamos da localização?
-              </LocationUsageInfoTitle>
-              <LocationUsageInfoText>
-                A localização enviada será utilizada pelas unidades ambientais
-                responsáveis para mapear a posição das espécies marítimas
-              </LocationUsageInfoText>
-            </LocationUsageInfoContainer>
-            <MapButtonsView>
-              <DefaultButton
-                type="secondary"
-                text="Cancelar"
-                buttonFunction={() => {
-                  navigation.goBack();
-                }}
-              />
-              <DefaultButton
-                text="Confirmar"
-                buttonFunction={() =>
-                  handleConfirm(mark.latitude, mark.longitude)
+                            image={{
+                              uri: Imagem.resolveAssetSource(
+                                require("../../assets/circle2.png")
+                              ).uri,
+                            }}
+                            
+                        />
+                       
+                    )
+                }else{
+                  return
                 }
-              />
-            </MapButtonsView>
-          </LocationUsageInfoView>
-        </MapInfoView> */}
-      </MapContainer>
-     
 
+                  }
+            )
+    }
+        </Map> 
+        
+      </MapContainer>
     </Container>
   );
 };

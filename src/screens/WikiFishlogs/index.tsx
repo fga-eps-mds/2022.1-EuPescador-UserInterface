@@ -28,8 +28,8 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
   const [isLogged, setIsLogged] = useState<boolean>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [showModal, setShowModal] = useState(false);
-  const [fishLatitude, setFishLatitude] = useState<any>();
-  const [fishLongitude, setFishLongitude] = useState<any>();
+  const [origin, setOrigin] = useState<any>('');
+  
   const { signOut } = useAuth();
 
   const getData = async () => {
@@ -79,8 +79,13 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
 
   const getPosition = async ()=>{
     let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-    setFishLatitude(loc.coords.latitude);
-    setFishLongitude(loc.coords.longitude);
+    setOrigin({
+      latitude: loc.coords.latitude,
+      longitude:loc.coords.longitude,
+      latitudeDelta:0.0922,
+      longitudeDelta:0.0922,
+    });
+ 
   }
 
   
@@ -170,8 +175,10 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
             />):
             
             <LogsMap
-              latitude = {fishLatitude}
-              longitude = {fishLongitude}
+              latitude = {origin.latitude}
+              longitude = {origin.longitude}
+              latitudeDelta = {origin.latitudeDelta}
+              longitudeDelta= {origin.longitudeDelta}
               token={token} 
               navigation={navigation}
               isAdmin={isAdmin ? isAdmin : false}

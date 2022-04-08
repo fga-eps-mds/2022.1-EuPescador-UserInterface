@@ -10,6 +10,12 @@ export const Container = styled.View`
   padding-left: ${RFValue(8, 640)}px;
 `;
 
+export const Imagem = styled.Image`
+  width: 1px;
+  height: 1px;
+ 
+`;
+
 export const MapContainer = styled.View`
     flex: 1;
     background-color: white;
@@ -23,6 +29,11 @@ export const Map = styled(MapView)`
     width: 100%;
     height:100%;
 `
+
+export const FishImage = styled.Image`
+    width: 10px;
+    height:10px;
+`;
 
 export const MapInfoView = styled.View`
   flex: 1;

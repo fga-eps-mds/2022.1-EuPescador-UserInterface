@@ -64,7 +64,6 @@ export const FishLogs = (
 
     try {
       const data = await GetAllFishLogs(token, filterQuery);
-
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
