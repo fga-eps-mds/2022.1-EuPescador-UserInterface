@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FC } from 'react';
 import { Buffer } from 'buffer';
 import { ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { CommonActions, useIsFocused } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import NetInfo from '@react-native-community/netinfo';
@@ -40,7 +40,6 @@ export const FishLog = ({ navigation, route }: any) => {
   const [userToken, setUserToken] = useState('');
 
   const connection = NetInfo.useNetInfo();
-	const isFocused = useIsFocused();
 
   const getData = async () => {
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
@@ -137,8 +136,7 @@ export const FishLog = ({ navigation, route }: any) => {
 				log = fish;
 			}
       if (log?.photo) {
-        const log64 = Buffer.from(log.photo).toString('base64');
-        const base64Img = `data:image/png;base64,${log64}`;
+        const base64Img = `data:image/png;base64,${log.photo}`;
         setFishPhoto(base64Img);
       }
       setFishName(log?.name);
@@ -156,7 +154,7 @@ export const FishLog = ({ navigation, route }: any) => {
 
   useEffect(() => {
     getData();
-  }, [isFocused]);
+  }, [userToken]);
 
   return (
     <FishContainer>

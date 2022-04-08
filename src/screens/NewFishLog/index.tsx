@@ -13,6 +13,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { createFishLog } from '../../services/fishLogService/createFishLog';
 import { GetOneFishLog } from '../../services/fishLogService/getOneFishLog';
 import { UpdateFishLog } from '../../services/fishLogService/updateFishLog';
+import { data } from '../../utils/dataFishes';
 import {
   NewFishLogContainer,
   ImageContainer,
@@ -493,37 +494,20 @@ export function NewFishLog({ navigation, route }: any) {
     loadData();
   }, [route.params]);
 
-  // Carregar Grande Grupo (Dropdown)
-  const largeGroupList = () => {
-    let fishesLargeGroup = fishes.map((item) => item.largeGroup);
-    fishesLargeGroup = [...new Set(fishesLargeGroup)];
-    return fishesLargeGroup.map((item, index) => {
-      return (
-        <OptionListItem key={index} onPress={() => {
-          setFishLargeGroup(item)
-          setDropLargeGroup(false)
-        }
-        }>
-          <RegularText text={item} />
-        </OptionListItem>
-      );
-    });
-  };
-
-  // Carregar Grupo (Dropdown)
+  //Carregar Grupo (Dropdown)
   const groupList = () => {
-    const filteredGroupFishes = fishes.filter((item) => {
+    const filteredGroupFishes = data.filter((item) => {
       if (fishLargeGroup) {
-        if (item.largeGroup.toLowerCase().includes(fishLargeGroup.toLowerCase().trim())) {
+        if (item.groupName.toLowerCase().includes(fishLargeGroup.toLowerCase().trim())) {
           return item;
         }
       } else {
         return item;
       }
     })
-    let fishesGroup = filteredGroupFishes.map((item) => item.group);
+    let fishesGroup = filteredGroupFishes.map((item) => item.subGroups);
     fishesGroup = [...new Set(fishesGroup)];
-    return fishesGroup.map((item, index) => {
+    return fishesGroup[0].map((item, index) => {
       return (
         <OptionListItem key={index} onPress={() => {
           setFishGroup(item)
@@ -534,7 +518,7 @@ export function NewFishLog({ navigation, route }: any) {
         </OptionListItem>
       );
     });
-  };
+  }
 
   return (
     <NewFishLogContainer>
@@ -617,9 +601,19 @@ export function NewFishLog({ navigation, route }: any) {
               </InputView>
             </TouchableOpacity>
             {
-              (dropLargeGroup && fishes.length) ? (
+              (dropLargeGroup && data.length) ? (
                 <OptionsContainer>
-                  <OptionList nestedScrollEnabled={true} showsVerticalScrollIndicator>{largeGroupList()}</OptionList>
+                  <OptionList nestedScrollEnabled={true} showsVerticalScrollIndicator>
+                  {data?.map?.((item, index) => (
+                    <OptionListItem key={index} onPress={() => {
+                        setFishLargeGroup(item.groupName)
+                        setDropLargeGroup(false)
+                      }}
+                      >
+                      <RegularText text={item.groupName} />
+                    </OptionListItem>
+                  ))}
+                  </OptionList>
                 </OptionsContainer>
               ) : (null)
             }
@@ -637,10 +631,11 @@ export function NewFishLog({ navigation, route }: any) {
                 <InputBox />
               </InputView>
             </TouchableOpacity>
+
             {
-              (dropGroup && fishes.filter((item) => {
+              (dropGroup && data.filter((item) => {
                 if (fishLargeGroup) {
-                  if (item.largeGroup.toLowerCase().includes(fishLargeGroup.toLowerCase().trim())) {
+                  if (item.groupName.toLowerCase().includes(fishLargeGroup.toLowerCase().trim())) {
                     return item;
                   }
                 } else {
@@ -650,8 +645,7 @@ export function NewFishLog({ navigation, route }: any) {
                 <OptionsContainer>
                   <OptionList nestedScrollEnabled={true} showsVerticalScrollIndicator>{groupList()}</OptionList>
                 </OptionsContainer>
-              ) : (null)
-            }
+              ) : (null)}
 
             <BoxView>
               <RowView>
