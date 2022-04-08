@@ -22,6 +22,8 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   const [authenticated, setAuthenticated] = useState<boolean | undefined>();
   const [userId, setUserId] = useState('');
 
+  const con = NetInfo.useNetInfo();
+
   async function getValues() {
     const token = await AsyncStorage.getItem('@eupescador/token');
     const _userId = await AsyncStorage.getItem('@eupescador/userId');
@@ -78,7 +80,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
 
   useEffect(() => {
     async function getFishCache() {
-      const conection = await NetInfo.fetch();
+      let conection = await NetInfo.fetch();
       const response = await AsyncStorage.getItem('@eupescador/newfish');
       if (response) {
         let fish = [];
@@ -93,7 +95,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
               fish[i].group,
               fish[i].species,
               fish[i].weight,
-              fish[i].lenght,
+              fish[i].length,
               fish[i].coordenates.latitude,
               fish[i].coordenates.longitude,
             );
@@ -105,7 +107,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
 
     getFishCache();
 
-  },[]);
+  },[con.isConnected]);
 
   return (
     <AuthContext.Provider
