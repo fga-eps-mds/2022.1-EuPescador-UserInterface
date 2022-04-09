@@ -118,8 +118,6 @@ export const FishLogs = (
   try {
     const res = await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-    console.log('STATUS:', res.granted);
-
     if (res.granted) {
       let today = new Date();
       let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
@@ -153,9 +151,9 @@ export const FishLogs = (
 
   const handleExportSelected = async () => {
     try {
-      console.log(exportList);
       const file: any = await ExportFishLogs(token, exportList);
       saveFile(file);
+      setExportList([]);
     } catch (error: any) {
       console.log(error);
       Alert.alert("Exportar Registros", "Falha ao exportar registros", [
