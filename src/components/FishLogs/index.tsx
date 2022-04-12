@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import {CheckBox} from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
 import {
   ButtonView,
   Container,
@@ -35,7 +36,6 @@ import { DraftButton } from '../DraftButton';
 import { FilterButton } from '../FilterButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 interface Props {
   token: string;
   isAdmin: boolean;
@@ -57,14 +57,42 @@ export const FishLogs = (
   const [isExportMode, setIsExportMode] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
 
-  const {StorageAccessFramework} = FileSystem
+  const { StorageAccessFramework } = FileSystem;
+
+  const loadFishesLogsOffline = async () => {
+    let allFishesLogs = await AsyncStorage.getItem('@eupescador/allFishesLogs');
+    if (allFishesLogs) {
+      let fishesLogs = JSON.parse(allFishesLogs);
+
+      const newFishesLogs = await AsyncStorage.getItem('@eupescador/newfish');
+
+      if (newFishesLogs) {
+        let fishesUnSave = [];
+        fishesUnSave = JSON.parse(newFishesLogs);
+
+        for (let i = 0; i < fishesUnSave.length; i++) {
+          fishesLogs.push(fishesUnSave[i]);
+        }
+      }
+      setFishLog(fishesLogs.reverse());
+    }
+  }
 
   const getFishLogs = async () => {
     setIsLoading(true);
 
     try {
-      const data = await GetAllFishLogs(token, filterQuery);
+      let data = await GetAllFishLogs(token, filterQuery);
+      const offlineRegisterArray = await AsyncStorage.getItem('@eupescador/newfish');
+      let fishesInCache = [];
+      if (offlineRegisterArray) {
+        fishesInCache = JSON.parse(offlineRegisterArray);
 
+        for (let i = 0; i < fishesInCache.length; i++) {
+          data.push(fishesInCache[i]);
+        }
+      }
+      await AsyncStorage.setItem('@eupescador/allFishesLogs', JSON.stringify(data));
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
@@ -79,11 +107,20 @@ export const FishLogs = (
       setHasDraft(drafts != '[]');
   }
 
-  const handleNavigation = (id: string) => {
+  const handleNavigationOnline = (id: string) => {
     navigation.navigate(
       'FishLog' as never,
       {
         log_id: id,
+      } as never,
+    );
+  };
+
+  const handleNavigationOffline = (fish: IFishLog) => {
+    navigation.navigate(
+      'FishLog' as never,
+      {
+        fish
       } as never,
     );
   };
@@ -164,7 +201,6 @@ export const FishLogs = (
     }
   };
 
-
   const addExportList = (logId: string) => {
     setExportList(arr => [...arr, logId]);
   };
@@ -174,8 +210,19 @@ export const FishLogs = (
   };
 
   useEffect(() => {
-    getFishLogs();
-    getDrafts();
+    async function isOnline() {
+      const con = await NetInfo.fetch();
+
+      if (con.isConnected) {
+        getFishLogs();
+        getDrafts();
+      } else {
+        setIsLoading(false);
+        loadFishesLogsOffline();
+      }
+    }
+
+    isOnline();
   }, []);
 
   return (
@@ -190,7 +237,6 @@ export const FishLogs = (
               navigation={navigation}
               screen='LogFilter'
             />
-
             {
               isAdmin ? (
                 <ButtonView>
@@ -247,8 +293,14 @@ export const FishLogs = (
                     selectAll={isCheck}
                     fishLog={item}
                     isHidden={!isExportMode}
-                    cardFunction={() => {
-                      handleNavigation(item.id);
+                    cardFunction={async () => {
+                      await NetInfo.fetch().then(status => {
+                        if (status.isConnected) {
+                          handleNavigationOnline(item.id);
+                        } else {
+                          handleNavigationOffline(item);
+                        }
+                      })
                     }}
                     selectFunction={() => {
                       addExportList(item.id);

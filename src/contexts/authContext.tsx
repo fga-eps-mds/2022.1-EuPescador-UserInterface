@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userService } from '../services/userServices/userService';
 import { UserLogin } from '../services/userServices/login';
+import { createFishLog } from '../services/fishLogService/createFishLog';
+import NetInfo from '@react-native-community/netinfo';
 
 interface IAuthProvider {
   children: React.ReactNode;
@@ -19,6 +21,8 @@ const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   const [authenticated, setAuthenticated] = useState<boolean | undefined>();
   const [userId, setUserId] = useState('');
+
+  const con = NetInfo.useNetInfo();
 
   async function getValues() {
     const token = await AsyncStorage.getItem('@eupescador/token');
@@ -73,6 +77,37 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     await AsyncStorage.removeItem('drafts');
     userService.defaults.headers.Authorization = undefined;
   }
+
+  useEffect(() => {
+    async function getFishCache() {
+      let conection = await NetInfo.fetch();
+      const response = await AsyncStorage.getItem('@eupescador/newfish');
+      if (response) {
+        let fish = [];
+        fish = JSON.parse(response);
+        if (conection.isConnected) {
+
+          for (let i = 0; i < fish.length; i++) {
+            await createFishLog(
+              fish[i].fishPhoto,
+              fish[i].name,
+              fish[i].largeGroup,
+              fish[i].group,
+              fish[i].species,
+              fish[i].weight,
+              fish[i].length,
+              fish[i].coordenates.latitude,
+              fish[i].coordenates.longitude,
+            );
+          }
+          await AsyncStorage.removeItem('@eupescador/newfish');
+        };
+      }
+    };
+
+    getFishCache();
+
+  },[con.isConnected]);
 
   return (
     <AuthContext.Provider
