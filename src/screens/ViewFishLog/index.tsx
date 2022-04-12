@@ -66,7 +66,7 @@ export const FishLog = ({ navigation, route }: any) => {
     }
 
 
-    const saveFile = async (csvFile: string) => {
+    const saveFile = async (txtFile: string) => {
         setIsLoading(true);
         try {
           const res = await MediaLibrary.requestPermissionsAsync()
@@ -75,8 +75,8 @@ export const FishLog = ({ navigation, route }: any) => {
             let today = new Date();
             let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
     
-            let fileUri = FileSystem.documentDirectory + `registros-${date}.csv`;
-            await FileSystem.writeAsStringAsync(fileUri, csvFile, { encoding: FileSystem.EncodingType.UTF8 });
+            let fileUri = FileSystem.documentDirectory + `registros-${date}.txt`;
+            await FileSystem.writeAsStringAsync(fileUri, txtFile, { encoding: FileSystem.EncodingType.UTF8 });
             const asset = await MediaLibrary.createAssetAsync(fileUri);
             await MediaLibrary.createAlbumAsync("euPescador", asset, false);
     
