@@ -282,7 +282,7 @@ export function NewFishLog({ navigation, route }: any) {
           await AsyncStorage.setItem('@eupescador/newfish', JSON.stringify(listFish));
         };
 
-        Alert.alert('Alert', 'Salvo em cache');
+        Alert.alert('Registro', 'Seu registro foi salvo com sucesso!');
       };
 
       setIsLoading(false);

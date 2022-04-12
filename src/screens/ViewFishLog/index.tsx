@@ -1,5 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
-import { Buffer } from 'buffer';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
@@ -65,7 +64,7 @@ export const FishLog = ({ navigation, route }: any) => {
     }
   };
 
-  const saveFile = async (csvFile: string) => {
+  const saveFile = async (txtFile: string) => {
     setIsLoading(true);
     try {
       const res = await MediaLibrary.requestPermissionsAsync();
@@ -83,8 +82,8 @@ export const FishLog = ({ navigation, route }: any) => {
           '-' +
           today.getMinutes();
 
-        let fileUri = FileSystem.documentDirectory + `registros-${date}.csv`;
-        await FileSystem.writeAsStringAsync(fileUri, csvFile, {
+        let fileUri = FileSystem.documentDirectory + `registros-${date}.txt`;
+        await FileSystem.writeAsStringAsync(fileUri, txtFile, {
           encoding: FileSystem.EncodingType.UTF8,
         });
         const asset = await MediaLibrary.createAssetAsync(fileUri);
@@ -125,16 +124,16 @@ export const FishLog = ({ navigation, route }: any) => {
   const getFishLogProperties = async (token: string) => {
     setIsLoading(true);
 
-		let log;
+    let log;
     try {
-			if (connection.isConnected) {
-				const { log_id } = route.params;
-				setLogId(log_id);
-				log = await GetOneFishLog(log_id, token);
-			} else {
-				const { fish } = route.params;
-				log = fish;
-			}
+      if (connection.isConnected) {
+        const { log_id } = route.params;
+        setLogId(log_id);
+        log = await GetOneFishLog(log_id, token);
+      } else {
+        const { fish } = route.params;
+        log = fish;
+      }
       if (log?.photo) {
         const base64Img = `data:image/png;base64,${log.photo}`;
         setFishPhoto(base64Img);
