@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, Alert } from 'react-native';
+import React, { useState } from "react";
+import { ActivityIndicator, Alert } from "react-native";
 import {
   CityStateView,
   InputScroll,
@@ -18,28 +18,34 @@ import {
   TitleHighlight,
   TitleText,
   TouchableTitle,
-} from './styles';
-import { CreateUser } from '../../services/userServices/createUser';
-import { DefaultButton } from '../../components/Button';
+} from "./styles";
+import { CreateUser } from "../../services/userServices/createUser";
+import { DefaultButton } from "../../components/Button";
 
 export function Register({ navigation }: any) {
   const [admin, setAdmin] = useState(false);
+  const [isSelectedAdmin, setIsSelectedAdmin] = useState(false);
+  const [isSelectedUser, setIsSelectedUser] = useState(true);
+  const [isSelectedSuperAdmin, setIsSelectedSuperAdmin] = useState(false);
+  const [tabController, setTabController] = useState("user");
+  const [superAdmin, setSuperAdmin] = useState(false);
   const [userName, setUserName] = useState<string | undefined>();
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [isEmailValid, setIsEmailValid] = useState(true);
-  const [isEmailValidMessage, setIsEmailValidMessage] = useState('');
+  const [isEmailValidMessage, setIsEmailValidMessage] = useState("");
   const [userPhone, setUserPhone] = useState<string | undefined>();
   const [isPhoneValid, setIsPhoneValid] = useState(true);
-  const [isPhoneValidMessage, setIsPhoneValidMessage] = useState('');
+  const [isPhoneValidMessage, setIsPhoneValidMessage] = useState("");
   const [userState, setUserState] = useState<string | undefined>();
   const [userCity, setUserCity] = useState<string | undefined>();
   const [userPassword, setUserPassword] = useState<string | undefined>();
   const [isPasswordValid, setIsPasswordValid] = useState(true);
-  const [isPasswordValidMessage, setIsPasswordValidMessage] = useState('');
+  const [isPasswordValidMessage, setIsPasswordValidMessage] = useState("");
   const [userConfirmPassword, setUserConfirmPassword] = useState<
     string | undefined
   >();
   const [adminToken, setAdminToken] = useState<string | undefined>();
+  const [superAdminToken, setSuperAdminToken] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email: string) => {
@@ -48,13 +54,13 @@ export function Register({ navigation }: any) {
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
       if (email.length > 254) {
-        setIsEmailValidMessage('Email muito extenso!');
+        setIsEmailValidMessage("Email muito extenso!");
         setIsEmailValid(false);
       } else if (!emailRegex.test(email)) {
-        setIsEmailValidMessage('Formato de email inválido!');
+        setIsEmailValidMessage("Formato de email inválido!");
         setIsEmailValid(false);
-      } else if (email.split('@')[0].length > 64) {
-        setIsEmailValidMessage('Email muito extenso!');
+      } else if (email.split("@")[0].length > 64) {
+        setIsEmailValidMessage("Email muito extenso!");
         setIsEmailValid(false);
       } else setIsEmailValid(true);
     }
@@ -62,7 +68,7 @@ export function Register({ navigation }: any) {
 
   const validatePassword = (password: string) => {
     if (userPassword !== password) {
-      setIsPasswordValidMessage('Digite a mesma senha!');
+      setIsPasswordValidMessage("Digite a mesma senha!");
       setIsPasswordValid(false);
     } else {
       setIsPasswordValid(true);
@@ -71,7 +77,7 @@ export function Register({ navigation }: any) {
 
   const validatePhone = (phone: string) => {
     if (phone.length < 15) {
-      setIsPhoneValidMessage('Tamanho de telefone inválido!'),
+      setIsPhoneValidMessage("Tamanho de telefone inválido!"),
         setIsPhoneValid(false);
     } else {
       setIsPhoneValid(true);
@@ -80,7 +86,7 @@ export function Register({ navigation }: any) {
 
   const handleRegister = async () => {
     setIsLoading(true);
-    let alertMessage = '';
+    let alertMessage = "";
     let result = false;
     if (
       userName &&
@@ -101,29 +107,29 @@ export function Register({ navigation }: any) {
             userCity,
             userPassword,
             admin,
-            adminToken,
+            adminToken
           );
-          alertMessage = 'Conta criada com sucesso!';
+          alertMessage = "Conta criada com sucesso!";
           result = true;
         } catch (error: any) {
           console.log(error);
           alertMessage = error.response.data.message;
         }
       } else {
-        alertMessage = 'Preencha todos os dados corretamente!';
+        alertMessage = "Preencha todos os dados corretamente!";
       }
     } else {
       alertMessage =
-        'Preencha todos os campos de dados para realizar o cadastro!';
+        "Preencha todos os campos de dados para realizar o cadastro!";
     }
-    Alert.alert('Cadastro', alertMessage, [
+    Alert.alert("Cadastro", alertMessage, [
       {
-        text: 'Ok',
+        text: "Ok",
         onPress: () => {
-          if(result) {
-            navigation.navigate('Home');
+          if (result) {
+            navigation.navigate("Home");
           }
-        }
+        },
       },
     ]);
     setIsLoading(false);
@@ -150,23 +156,58 @@ export function Register({ navigation }: any) {
         <TouchableTitle
           onPress={() => {
             setAdmin(false);
+            setSuperAdmin(false);
+            setTabController("user");
+
+            if (tabController == "user") {
+              setIsSelectedUser(true);
+              setIsSelectedAdmin(false);
+              setIsSelectedSuperAdmin(false);
+            }
           }}
         >
-          <TitleText admin={admin}>Usuário</TitleText>
-          {admin ? null : <TitleHighlight />}
+          <TitleText admin={isSelectedUser}>Usuário</TitleText>
+          {/* {!isSelectedUser ? null : <TitleHighlight />} */}
         </TouchableTitle>
+
         <TouchableTitle
           onPress={() => {
             setAdmin(true);
+            setSuperAdmin(false);
+            setTabController("admin");
+
+            if (tabController == "admin") {
+              setIsSelectedUser(false);
+              setIsSelectedAdmin(true);
+              setIsSelectedSuperAdmin(false);
+            }
           }}
         >
-          <TitleText admin={!admin}>Pesquisador</TitleText>
-          {admin ? <TitleHighlight /> : null}
+          <TitleText admin={isSelectedAdmin}>Pesquisador</TitleText>
+          {/* {!isSelectedAdmin ? <TitleHighlight /> : null} */}
+        </TouchableTitle>
+
+        <TouchableTitle
+          onPress={() => {
+            setAdmin(false);
+            setSuperAdmin(true);
+            setTabController("super-admin");
+
+            if (tabController == "super-admin") {
+              setIsSelectedUser(false);
+              setIsSelectedAdmin(false);
+              setIsSelectedSuperAdmin(true);
+            }
+          }}
+        >
+          <TitleText admin={isSelectedSuperAdmin}>Administrador</TitleText>
+          {/* {!isSelectedSuperAdmin ? <TitleHighlight /> : null} */}
         </TouchableTitle>
       </TitleContainer>
-      { isLoading ?
+      {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-        :<InputScroll>
+      ) : (
+        <InputScroll>
           <InputContainer>
             <InputView>
               <MaterialInputIcon name="person-outline" />
@@ -195,9 +236,9 @@ export function Register({ navigation }: any) {
               <InputMask
                 type="cel-phone"
                 options={{
-                  maskType: 'BRL',
+                  maskType: "BRL",
                   withDDD: true,
-                  dddMask: '(99) ',
+                  dddMask: "(99) ",
                 }}
                 value={userPhone}
                 onChangeText={handlePhone}
@@ -266,11 +307,25 @@ export function Register({ navigation }: any) {
                 <InputBox />
               </>
             ) : null}
+            {superAdmin ? (
+              <>
+                <InputView>
+                  <ComunityInputIcon name="key-outline" />
+                  <Input
+                    placeholder="Código de Administrador"
+                    value={superAdminToken}
+                    onChangeText={setSuperAdminToken}
+                  />
+                </InputView>
+                <InputBox />
+              </>
+            ) : null}
             <RegisterButtonView>
               <DefaultButton text="Cadastrar" buttonFunction={handleRegister} />
             </RegisterButtonView>
           </InputContainer>
-        </InputScroll>}
+        </InputScroll>
+      )}
     </Container>
   );
 }

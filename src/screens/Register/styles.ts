@@ -1,7 +1,7 @@
-import { RFValue } from 'react-native-responsive-fontsize';
-import styled from 'styled-components/native';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { TextInputMask } from 'react-native-masked-text';
+import { RFValue } from "react-native-responsive-fontsize";
+import styled from "styled-components/native";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { TextInputMask } from "react-native-masked-text";
 
 export const Container = styled.View`
   flex: 1;
@@ -24,8 +24,8 @@ export const TitleHighlight = styled.View`
 
 export const TitleText = styled.Text<{ admin: boolean }>`
   font-family: ${({ theme }) =>
-    p =>
-      p.admin ? theme.fonts.regular : theme.fonts.bold};
+    (p) =>
+      p.admin ? theme.fonts.bold : theme.fonts.regular};
   font-size: ${RFValue(12, 640)}px;
   margin-right: ${RFValue(16, 640)}px;
 `;
