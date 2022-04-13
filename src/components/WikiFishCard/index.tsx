@@ -11,6 +11,7 @@ import {
   NoFishImage,
   NoFishImageIcon,
 } from './styles';
+import { FishWiki } from '../../interfaces/FishWiki';
 
 export interface IFish {
   _id: string;
@@ -52,7 +53,7 @@ export interface IFishLog {
 }
 
 interface IFishCardProps {
-  fishWiki?: IFish;
+  fishWiki?: FishWiki;
   fishLog?: IFishLog;
   cardFunction: VoidFunction;
 }
