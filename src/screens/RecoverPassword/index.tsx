@@ -2,35 +2,61 @@ import React, { useState } from 'react';
 import { CommonActions } from '@react-navigation/native';
 import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import {
-  Container,
-  ErrorMessage,
-  Input,
-  InputBox,
-  InputContainer,
-  InputView,
-  LoginButtonView,
-  HomeLogoContainer,
-  HomeAppImage,
-  HomeAppTitle,
-  HomeAppTitleBlue,
-  HomePhraseContainer,
-  HomeRegularText,
-  HomeLogLink,
-  ForgotPasswordLogLink,
-  ForgotPasswordContainer,
-} from './styles';
+    Container,
+    ErrorMessage,
+    Input,
+    InputBox,
+    InputContainer,
+    InputView,
+    LoginButtonView,
+    HomeLogoContainer,
+    HomeAppImage,
+    HomeAppTitle,
+    HomeAppTitleBlue,
+  } from './styles';
 import { useAuth } from '../../contexts/authContext';
 import { DefaultButton } from '../../components/Button';
+import { UserEmail } from '../../services/userServices/userEmail'; 
 
-export default function Login({ navigation }: any) {
-  const [userEmailPhone, setUserEmailPhone] = useState<string | undefined>();
+export default function RecoverPassword({ navigation }: any) {
+  const [userEmailPhone, setUserEmailPhone] = useState<string>('');
   const [isEmailPhoneValid, setIsEmailPhoneValid] = useState(true);
   const [isEmailPhoneValidMessage, setIsEmailPhoneValidMessage] = useState(
     'Usuário não encontrado',
   );
-  const [userPassword, setUserPassword] = useState<string | undefined>();
-  const { signIn, authenticated } = useAuth();
+  const [userPassword, setUserPassword] = useState<string>('');
+  const { validEmail, authenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [users, setUsers] = useState<any[]>([]);
+
+  /* const handleEmail = async (email:string) => {
+    setIsLoading(true);
+    let alertMessage = '';
+    if (userEmailPhone) {
+      setIsEmailPhoneValid(true);
+      const res = await validEmail();
+      
+    const isValid= res.map(log => {
+        if(log.email== email ){
+            return (
+                true
+            )
+        }else{
+            return false;
+        }
+
+    })
+
+    if(isValid){
+        //alert de email enviado
+    }else{
+        //alert de não existe no banco
+    }
+      
+      
+     
+  }; */
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -68,7 +94,7 @@ export default function Login({ navigation }: any) {
       : <InputContainer>
           <InputView>
             <Input
-              placeholder="E-mail / Telefone"
+              placeholder="E-mail"
               value={userEmailPhone}
               onChangeText={setUserEmailPhone}
             />
@@ -78,29 +104,9 @@ export default function Login({ navigation }: any) {
           ) : (
             <ErrorMessage>{isEmailPhoneValidMessage}</ErrorMessage>
           )}
-
-          <InputView>
-            <Input
-              placeholder="Senha"
-              secureTextEntry
-              value={userPassword}
-              onChangeText={setUserPassword}
-            />
-          </InputView>
           <LoginButtonView>
-            <DefaultButton text="Entrar" buttonFunction={handleLogin} />
+            <DefaultButton text="Enviar" buttonFunction={handleLogin} />
           </LoginButtonView>
-          <ForgotPasswordContainer>
-            <TouchableOpacity  onPress={() => navigation.navigate('RecoverPassword')}>
-              <ForgotPasswordLogLink>Esqueci minha Senha</ForgotPasswordLogLink>
-            </TouchableOpacity>
-          </ForgotPasswordContainer>
-          <HomePhraseContainer>
-            <HomeRegularText>Não possui uma conta ainda?</HomeRegularText>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <HomeLogLink> Cadastre-se</HomeLogLink>
-            </TouchableOpacity>
-          </HomePhraseContainer>
         </InputContainer>}
     </Container>
   );
