@@ -42,8 +42,8 @@ async function UpdateFishLog(
         length: length ? parseFloat(length) : null,
         weight: weight ? parseFloat(weight) : null,
         reviewed,
-        reviewedBy,
-        updatedBy: userId,
+        reviewedBy: Number(reviewedBy),
+        updatedBy: Number(userId),
     }, { headers: { Authorization: userToken } });
     return res.data;
 }
