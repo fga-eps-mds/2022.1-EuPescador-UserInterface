@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CommonActions } from '@react-navigation/native';
 import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import {
@@ -30,55 +30,17 @@ export default function RecoverPassword({ navigation }: any) {
 
   const [users, setUsers] = useState<any[]>([]);
 
-  /* const handleEmail = async (email:string) => {
-    setIsLoading(true);
-    let alertMessage = '';
-    if (userEmailPhone) {
-      setIsEmailPhoneValid(true);
-      const res = await validEmail();
-      
-    const isValid= res.map(log => {
-        if(log.email== email ){
-            return (
-                true
-            )
-        }else{
-            return false;
-        }
-
-    })
-
-    if(isValid){
-        //alert de email enviado
+  const recoverPassword = async () => {
+    let emails = [];
+    emails = await UserEmail();
+    let response = false;
+    response = emails.data.filter(item => item.email === userEmailPhone).length > 0;
+    if(response){
+      Alert.alert("Email enviado!","Confira a sua caixa de e-mail para recuperar sua senha")
     }else{
-        //alert de não existe no banco
+      Alert.alert("Email inválido!","Não encontramos nenhum usuário com esse e-mail");
     }
-      
-      
-     
-  }; */
-
-  const handleLogin = async () => {
-    setIsLoading(true);
-    let alertMessage = '';
-    if (userEmailPhone && userPassword) {
-      setIsEmailPhoneValid(true);
-      const res = await signIn(userEmailPhone, userPassword);
-      
-      if (res.status === 200) {
-      } else if (res.response.status === 404) setIsEmailPhoneValid(false);
-      else alertMessage = res.response.data.message;
-    } else {
-      alertMessage = 'Preencha todos os campos de dados para realizar o login!';
-    }
-    if (alertMessage) {
-      Alert.alert('Login', alertMessage, [
-        {
-          text: 'Ok'
-        },
-      ]);
-    }
-    setIsLoading(false);
+   
   };
 
   return (
@@ -105,7 +67,7 @@ export default function RecoverPassword({ navigation }: any) {
             <ErrorMessage>{isEmailPhoneValidMessage}</ErrorMessage>
           )}
           <LoginButtonView>
-            <DefaultButton text="Enviar" buttonFunction={handleLogin} />
+            <DefaultButton text="Enviar" buttonFunction={recoverPassword} />
           </LoginButtonView>
         </InputContainer>}
     </Container>
