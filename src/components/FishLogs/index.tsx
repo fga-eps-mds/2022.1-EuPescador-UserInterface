@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
 import {CheckBox} from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
 import {
   ButtonView,
   Container,
@@ -36,7 +36,6 @@ import { DraftButton } from '../DraftButton';
 import { FilterButton } from '../FilterButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 interface Props {
   token: string;
   isAdmin: boolean;
@@ -58,12 +57,42 @@ export const FishLogs = (
   const [isExportMode, setIsExportMode] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
 
+  const { StorageAccessFramework } = FileSystem;
+
+  const loadFishesLogsOffline = async () => {
+    let allFishesLogs = await AsyncStorage.getItem('@eupescador/allFishesLogs');
+    if (allFishesLogs) {
+      let fishesLogs = JSON.parse(allFishesLogs);
+
+      const newFishesLogs = await AsyncStorage.getItem('@eupescador/newfish');
+
+      if (newFishesLogs) {
+        let fishesUnSave = [];
+        fishesUnSave = JSON.parse(newFishesLogs);
+
+        for (let i = 0; i < fishesUnSave.length; i++) {
+          fishesLogs.push(fishesUnSave[i]);
+        }
+      }
+      setFishLog(fishesLogs.reverse());
+    }
+  }
 
   const getFishLogs = async () => {
     setIsLoading(true);
 
     try {
-      const data = await GetAllFishLogs(token, filterQuery);
+      let data = await GetAllFishLogs(token, filterQuery);
+      const offlineRegisterArray = await AsyncStorage.getItem('@eupescador/newfish');
+      let fishesInCache = [];
+      if (offlineRegisterArray) {
+        fishesInCache = JSON.parse(offlineRegisterArray);
+
+        for (let i = 0; i < fishesInCache.length; i++) {
+          data.push(fishesInCache[i]);
+        }
+      }
+      await AsyncStorage.setItem('@eupescador/allFishesLogs', JSON.stringify(data));
       setFishLog(data.reverse());
     } catch (error: any) {
       console.log(error);
@@ -78,11 +107,20 @@ export const FishLogs = (
       setHasDraft(drafts != '[]');
   }
 
-  const handleNavigation = (id: string) => {
+  const handleNavigationOnline = (id: string) => {
     navigation.navigate(
       'FishLog' as never,
       {
         log_id: id,
+      } as never,
+    );
+  };
+
+  const handleNavigationOffline = (fish: IFishLog) => {
+    navigation.navigate(
+      'FishLog' as never,
+      {
+        fish
       } as never,
     );
   };
@@ -113,42 +151,46 @@ export const FishLogs = (
 
 
   const saveFile = async (csvFile: string) => {
-    setIsLoading(true);
-    try {
-      const res = await MediaLibrary.requestPermissionsAsync()
+  setIsLoading(true);
+  try {
+    const res = await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-      if (res.granted) {
-        let today = new Date();
-        let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
+    if (res.granted) {
+      let today = new Date();
+      let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getHours() + "-" + today.getMinutes();
+      let filename = `registros-${date}.txt`
+      let directoryUri = res.directoryUri;
+      await StorageAccessFramework.createFileAsync(directoryUri, filename, "application/txt")
+        .then(async(fileUri) => {
+          await FileSystem.writeAsStringAsync(fileUri, csvFile, { encoding: FileSystem.EncodingType.UTF8 });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
 
-        let fileUri = FileSystem.documentDirectory + `registros-${date}.csv`;
-        await FileSystem.writeAsStringAsync(fileUri, csvFile);
-        const asset = await MediaLibrary.createAssetAsync(fileUri);
-        await MediaLibrary.createAlbumAsync("euPescador", asset, false);
-
-        handleExport();
-        Alert.alert("Exportar Registros", "Registros exportados com sucesso. Você pode encontrar o arquivo em /Pictures/euPescador", [
-          {
-            text: "Ok",
-          }
-        ])
-      }
-    } catch (error: any) {
-      console.log(error);
-      Alert.alert("Exportar Registros", "Falha ao exportar registros", [
+      handleExport();
+      Alert.alert("Exportar Registros", "Registro(s) exportado(s) com sucesso!", [
         {
           text: "Ok",
         }
       ])
     }
-    setIsLoading(false);
-  };
+  } catch (error: any) {
+    console.log(error);
+    Alert.alert("Exportar Registros", "Falha ao exportar registro(s)!", [
+      {
+        text: "Ok",
+      }
+    ])
+  }
+  setIsLoading(false);
+};
 
   const handleExportSelected = async () => {
     try {
-      console.log(exportList);
       const file: any = await ExportFishLogs(token, exportList);
       saveFile(file);
+      setExportList([]);
     } catch (error: any) {
       console.log(error);
       Alert.alert("Exportar Registros", "Falha ao exportar registros", [
@@ -158,7 +200,6 @@ export const FishLogs = (
       ])
     }
   };
-
 
   const addExportList = (logId: string) => {
     setExportList(arr => [...arr, logId]);
@@ -169,8 +210,19 @@ export const FishLogs = (
   };
 
   useEffect(() => {
-    getFishLogs();
-    getDrafts();
+    async function isOnline() {
+      const con = await NetInfo.fetch();
+
+      if (con.isConnected) {
+        getFishLogs();
+        getDrafts();
+      } else {
+        setIsLoading(false);
+        loadFishesLogsOffline();
+      }
+    }
+
+    isOnline();
   }, []);
 
   return (
@@ -185,7 +237,6 @@ export const FishLogs = (
               navigation={navigation}
               screen='LogFilter'
             />
-
             {
               isAdmin ? (
                 <ButtonView>
@@ -242,8 +293,14 @@ export const FishLogs = (
                     selectAll={isCheck}
                     fishLog={item}
                     isHidden={!isExportMode}
-                    cardFunction={() => {
-                      handleNavigation(item.id);
+                    cardFunction={async () => {
+                      await NetInfo.fetch().then(status => {
+                        if (status.isConnected) {
+                          handleNavigationOnline(item.id);
+                        } else {
+                          handleNavigationOffline(item);
+                        }
+                      })
                     }}
                     selectFunction={() => {
                       addExportList(item.id);
