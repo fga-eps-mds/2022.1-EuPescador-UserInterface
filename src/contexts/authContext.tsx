@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     const token = await AsyncStorage.getItem('@eupescador/token');
     const _userId = await AsyncStorage.getItem('@eupescador/userId');
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
+    console.log(token)
 
     return { token, _userId, userAdmin };
   }
