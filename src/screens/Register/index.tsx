@@ -92,11 +92,12 @@ export function Register({ navigation }: any) {
       userConfirmPassword
     ) {
       if (isEmailValid && isPasswordValid && isPhoneValid) {
+        const newPhone = userPhone.replaceAll(/\D/g, '');
         try {
           await CreateUser(
             userName,
             userEmail,
-            userPhone,
+            newPhone,
             userState,
             userCity,
             userPassword,

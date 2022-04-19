@@ -22,8 +22,6 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
     
     
   }, []);
-    
-  
 
   // const handleDrag = (e: MapEvent) => {
   //   setMark(e.nativeEvent.coordinate);
@@ -47,8 +45,6 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
         >
           {
             isAdmin ? (
-              
-
               fishLogs.map(log => {
                 if(log.reviewed){
                 return (
@@ -71,7 +67,7 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
          
             
               fishLogs.map(log => {
-                if(log.reviewed){
+                if(log.reviewed && log.visible){
                   return (         
                     
                         <Marker
