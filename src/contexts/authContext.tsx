@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userService } from '../services/userServices/userService';
 import { UserLogin } from '../services/userServices/login';
+import { UserEmail } from '../services/userServices/userEmail';
 import { createFishLog } from '../services/fishLogService/createFishLog';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -14,6 +15,7 @@ interface IAuthContext {
   authenticated: boolean | undefined;
   signIn: (email: string, password: string) => Promise<any>;
   signOut: () => Promise<void>;
+  validEmail: ()=>Promise<any>;
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -28,6 +30,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     const token = await AsyncStorage.getItem('@eupescador/token');
     const _userId = await AsyncStorage.getItem('@eupescador/userId');
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
+    console.log(token)
 
     return { token, _userId, userAdmin };
   }
@@ -63,6 +66,15 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
       setAuthenticated(true);
       setUserId(result.data.id);
       return result;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async function validEmail() {
+    try {
+      const result = await UserEmail();
+      
     } catch (error) {
       return error;
     }

@@ -33,12 +33,15 @@ export const TitleHighlight = styled.View`
   background-color: ${({ theme }) => theme.colors.secondary};
 `;
 
-export const TitleText = styled.Text<{ wiki: boolean }>`
+export const TitleText = styled.Text<{ wiki: boolean, register: boolean}>`
   font-family: ${({ theme }) =>
     p =>
-      p.wiki ? theme.fonts.bold : theme.fonts.regular};
+      p.wiki && p.register ? theme.fonts.bold :  theme.fonts.regular};
+    
   font-size: ${RFValue(12, 640)}px;
   margin-right: ${RFValue(16, 640)}px;
+
+  
 `;
 
 export const InstructionButton = styled.TouchableOpacity``
