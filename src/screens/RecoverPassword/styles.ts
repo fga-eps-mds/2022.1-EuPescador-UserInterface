@@ -45,7 +45,7 @@ export const InputView = styled.View`
 `;
 
 export const InputBox = styled.View`
-  margin-bottom: ${RFValue(32, 640)}px;
+  margin-bottom: ${RFValue(5, 640)}px;
 `;
 
 export const Input = styled.TextInput`
@@ -55,7 +55,7 @@ export const Input = styled.TextInput`
   justify-content: flex-start;
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(12, 640)}px;
-  margin: 0 ${RFValue(11, 640)}px;
+  margin: ${RFValue(11, 640)}px;
 `;
 
 export const ErrorMessage = styled.Text`
@@ -71,32 +71,5 @@ export const LoginButtonView = styled.View`
   
 `;
 
-export const ForgotPasswordContainer = styled.View`
-  align-items: center;
-  margin: ${RFValue(4, 640)}px 0px 15px 0px;
-`;
 
-export const ForgotPasswordLogLink = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.bold};
-  font-size: ${RFValue(10.5, 640)}px;
-  line-height: ${RFValue(18, 640)}px;
-  color: #3CB371;
-  text-decoration: underline;
-`;
 
-export const HomePhraseContainer = styled.View`
-  flex-direction: row;
-  margin: ${RFValue(4, 640)}px 0px;
-`;
-export const HomeRegularText = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(10.5, 640)}px;
-  line-height: ${RFValue(18, 640)}px;
-  color: ${({ theme }) => theme.colors.on_background};
-`;
-export const HomeLogLink = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.bold};
-  font-size: ${RFValue(10.5, 640)}px;
-  line-height: ${RFValue(18, 640)}px;
-  color: ${({ theme }) => theme.colors.on_background};
-`;

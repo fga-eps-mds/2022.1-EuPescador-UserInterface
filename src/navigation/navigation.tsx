@@ -13,6 +13,7 @@ import { WikiFish } from '../screens/WikiFish';
 import { Drafts } from '../screens/Drafts';
 import { WikiFilter } from '../screens/WikiFilter';
 import { LogFilter } from '../screens/RegisterFilter';
+import RecoverPassword from '../screens/RecoverPassword';
 
 const AuthenticateStack = createNativeStackNavigator();
 
@@ -81,6 +82,7 @@ const AppRoutes = () => {
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="RecoverPassword" component={RecoverPassword} />
       <Stack.Screen
         name="Register"
         component={Register}
