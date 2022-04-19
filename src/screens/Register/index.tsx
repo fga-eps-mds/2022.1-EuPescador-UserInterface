@@ -107,7 +107,9 @@ export function Register({ navigation }: any) {
             userCity,
             userPassword,
             admin,
-            adminToken
+            adminToken,
+            superAdmin,
+            superAdminToken
           );
           alertMessage = "Conta criada com sucesso!";
           result = true;
