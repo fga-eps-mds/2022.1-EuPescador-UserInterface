@@ -16,7 +16,8 @@ import {
   } from './styles';
 import { useAuth } from '../../contexts/authContext';
 import { DefaultButton } from '../../components/Button';
-import { UserEmail } from '../../services/userServices/userEmail'; 
+import { UserEmail } from '../../services/userServices/userEmail';
+import { SendMail } from '../../services/userServices/sendMail';
 
 export default function RecoverPassword({ navigation }: any) {
   const [userEmailPhone, setUserEmailPhone] = useState<string>('');
@@ -36,6 +37,7 @@ export default function RecoverPassword({ navigation }: any) {
     let response = false;
     response = emails.data.filter(item => item.email === userEmailPhone).length > 0;
     if(response){
+      await SendMail();
       Alert.alert("Email enviado!","Confira a sua caixa de e-mail para recuperar sua senha")
     }else{
       Alert.alert("Email inválido!","Não encontramos nenhum usuário com esse e-mail");
