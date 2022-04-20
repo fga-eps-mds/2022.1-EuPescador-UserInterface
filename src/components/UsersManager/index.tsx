@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { GetAllUsers } from '../../services/userServices/getAllUsers';
 import { UserCard } from '../UserCard';
 import { UserContainer } from './styles';
+import {deleteUser} from "../../services/adminServices/deleteuser";
 
 export interface UserInfo {
     id: number,
@@ -30,9 +31,23 @@ export const UsersManager = ({ navigation, route }: any) => {
         console.log("ABRIU");
     }
 
+    const deleteFunc = async (id: number) => {
+        
+        const res = await deleteUser( id.toString());
+        if(res == 200) {
+            console.log("exclui");
+            const response = await GetAllUsers();
+
+            setUserList(response);
+        } else {
+            console.log("deu merda");
+        }    
+    };
+
     useEffect(() => {
         loadList();
-      }, [screamIsFocus]);
+        
+      }, [screamIsFocus, userList]);
 
     return (
         <UserContainer>
@@ -40,7 +55,7 @@ export const UsersManager = ({ navigation, route }: any) => {
                 <FlatList
                     data={userList}
                     renderItem= {({item}) => (
-                        <UserCard data={item} token={token && ''}/>
+                        <UserCard data={item} handleClick={deleteFunc}/>
                     )}
                 >
                 </FlatList>

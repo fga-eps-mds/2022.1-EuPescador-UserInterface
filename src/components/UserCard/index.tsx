@@ -7,7 +7,6 @@ import {
   DeleteIcon,
   UserCardView,
 } from "./styles";
-import {deleteUser} from "../../services/adminServices/deleteuser";
 
 export interface UserInfo {
   data: {
@@ -18,19 +17,10 @@ export interface UserInfo {
     estate: string;
     city: string;
   };
+  handleClick(id : number) : void;
 }
 
-export const UserCard = ({data}: UserInfo) => {
-
-  const deleteFunc = async () => {
-    const res = await deleteUser( data.id.toString());
-    if(res == 200) {
-        console.log("exclui");
-    } else {
-        console.log("deu merda");
-    }
-    
-  };
+export const UserCard = ({data, handleClick}: UserInfo) => {
 
   return (
     // <UserCardView>
@@ -43,8 +33,10 @@ export const UserCard = ({data}: UserInfo) => {
     //   </ButtonStyle> */}
     // </UserCardView>
     <View>
-        <Text>{data.id}</Text>
-        <Button onPress={deleteFunc}  title="Deletar"/>
+        <Text>{data.name}</Text>
+        <Button onPress={() => {
+          handleClick(data.id)
+        }}  title="Deletar"/>
     </View>
   );
 };
