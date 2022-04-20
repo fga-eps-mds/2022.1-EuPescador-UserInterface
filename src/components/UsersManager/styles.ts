@@ -1,11 +1,13 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
+import { MaterialIcons } from '@expo/vector-icons';
 
 export const UserContainer = styled.View`
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-beetween;
   width: ${RFValue(156, 640)}px;
   height: ${RFValue(180, 640)}px;
-  elevation: 8;
+  elevation: 4;
   border-radius: ${RFValue(16, 640)}px;
   background-color: ${({ theme }) => theme.colors.background};
   margin-bottom: 14px;
