@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     const token = await AsyncStorage.getItem('@eupescador/token');
     const _userId = await AsyncStorage.getItem('@eupescador/userId');
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
+    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
 
     return { token, _userId, userAdmin };
   }
@@ -55,6 +56,10 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
         '@eupescador/userAdmin',
         JSON.stringify(result.data.admin),
       );
+      await AsyncStorage.setItem(
+        '@eupescador/userSuperAdmin',
+        JSON.stringify(result.data.superAdmin),
+      );
       const hasAcessTheApp = await AsyncStorage.getItem('hasAcessTheApp');
       if (!!hasAcessTheApp == false) {
         await AsyncStorage.setItem('hasAcessTheApp', 'false');
@@ -74,6 +79,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     await AsyncStorage.removeItem('@eupescador/token');
     await AsyncStorage.removeItem('@eupescador/userId');
     await AsyncStorage.removeItem('@eupescador/userAdmin');
+    await AsyncStorage.removeItem('@eupescador/userSuperAdmin');
     await AsyncStorage.removeItem('drafts');
     userService.defaults.headers.Authorization = undefined;
   }

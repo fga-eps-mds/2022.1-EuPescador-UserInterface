@@ -17,18 +17,23 @@ import {
 } from './styles';
 import { useAuth } from '../../contexts/authContext';
 import { InstructionModal } from '../../components/InstructionsModal';
+import {UsersManager} from "../../screens/UsersManager";
+
 
 export const WikiFishlogs = ({ navigation, route }: any) => {
 
   const [token, setToken] = useState('');
   const [wiki, setWiki] = useState(true);
+  const [fishlogTab, setFishLogTab] = useState<boolean>(false);
   const [isLogged, setIsLogged] = useState<boolean>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [showModal, setShowModal] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>();
   const { signOut } = useAuth();
 
   const getData = async () => {
     const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
+    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
     const token = await AsyncStorage.getItem('@eupescador/token');
     if (token) {
       setToken(token);
@@ -40,6 +45,10 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
       setIsAdmin(true);
     else
       setIsAdmin(false);
+    if (userSuperAdmin === "true")
+      setIsSuperAdmin(true);
+    else
+      setIsSuperAdmin(false);
 
   };
 
@@ -102,19 +111,31 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
               <TouchableTitle
                 onPress={() => {
                   setWiki(true);
+                  setFishLogTab(false);
                 }}
               >
-                <TitleText wiki={wiki}>Biblioteca de Peixes</TitleText>
-                {wiki ? <TitleHighlight /> : null}
+                <TitleText wiki={wiki} fishLogTab={!fishlogTab}>Biblioteca de Peixes</TitleText>
+                {wiki && !fishlogTab  ? <TitleHighlight /> : null}
               </TouchableTitle>
               <TouchableTitle
                 onPress={() => {
                   setWiki(false);
+                  setFishLogTab(true);
                 }}
               >
-                <TitleText wiki={!wiki}>Registros</TitleText>
-                {wiki ? null : <TitleHighlight />}
+                <TitleText wiki={!wiki} fishLogTab={fishlogTab}>Registros</TitleText>
+                {(!wiki && fishlogTab)  ? <TitleHighlight /> : null}
               </TouchableTitle>
+              {isSuperAdmin ? (
+              <TouchableTitle
+                onPress={() => {
+                  setWiki(false);
+                  setFishLogTab(false);
+                }}
+              >
+                <TitleText wiki={!wiki} fishLogTab={!fishlogTab}>Usuários</TitleText>
+                {(!wiki && !fishlogTab)  ? <TitleHighlight /> : null}
+              </TouchableTitle>) : null}
             </TitleButtonsContainer>
             <InstructionButton onPress={() => { setShowModal(true) }}>
               <InstructionButtonIcon name="info" />
@@ -125,12 +146,12 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
           (<Wiki
             navigation={navigation}
             filterQuery={(route.params && route.params.wikiFilterQuery) ? route.params.wikiFilterQuery : null}
-          />) :
+          />) : fishlogTab ? 
           (<FishLogs token={token} 
             navigation={navigation}
             isAdmin={isAdmin ? isAdmin : false}
             filterQuery={(route.params && route.params.logFilterQuery) ? route.params.logFilterQuery : null}
-          />)
+          />)  : (<UsersManager></UsersManager>) 
         }
       </PageContainer>
     </>
