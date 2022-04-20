@@ -1,11 +1,9 @@
 import { userService } from './userService';
 
 async function SendMail() {
-  let route = "/recover-password/";
-  
-  const res = await userService.get(route);
+  let route = "/recover-password";
 
-  return res;
+  userService.get(route);
 }
 
 export { SendMail };
