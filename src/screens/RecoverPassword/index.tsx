@@ -6,6 +6,7 @@ import {
   Input,
   InputBox,
   InputContainer,
+  InputTitle,
   InputView,
   LoginButtonView,
   HomeLogoContainer,
@@ -19,14 +20,16 @@ import { SendMail } from '../../services/userServices/sendMail';
 
 export default function RecoverPassword({ navigation }: any) {
   const [userEmailPhone, setUserEmailPhone] = useState<string>('');
+  const [token, setToken] = useState<string>('');
   const [isEmailPhoneValid, setIsEmailPhoneValid] = useState(true);
   const [isEmailPhoneValidMessage, setIsEmailPhoneValidMessage] = useState(
     'Usuário não encontrado'
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingMail, setIsSendingMail] = useState(false);
+  const [tokenValidated, setTokenValidated] = useState(false);
 
-  const recoverPassword = async () => {
+  const sendToken = async () => {
     let emails = [];
     emails = await UserEmail();
     let response = false;
@@ -48,6 +51,10 @@ export default function RecoverPassword({ navigation }: any) {
     }
   };
 
+  const verifyToken = async () => {
+
+  }
+
   return (
     <Container>
       <HomeLogoContainer>
@@ -60,13 +67,29 @@ export default function RecoverPassword({ navigation }: any) {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <InputContainer>
-          <InputView>
-            <Input
-              placeholder="E-mail"
-              value={userEmailPhone}
-              onChangeText={setUserEmailPhone}
-            />
-          </InputView>
+          {tokenValidated ? null :
+            <>
+              <InputTitle>Já possui um token? Valide-o abaixo:</InputTitle>
+              <InputView>
+                <Input
+                  placeholder="Token"
+                  value={token}
+                  onChangeText={setToken}
+                />
+              </InputView>
+    
+              <InputTitle>
+                Não possui um token? Digite seu email para enviarmos um para você:
+              </InputTitle>
+              <InputView>
+                <Input
+                  placeholder="E-mail"
+                  value={userEmailPhone}
+                  onChangeText={setUserEmailPhone}
+                />
+              </InputView>
+            </>
+          }
           {isEmailPhoneValid ? (
             <InputBox />
           ) : (
@@ -75,7 +98,7 @@ export default function RecoverPassword({ navigation }: any) {
           <LoginButtonView>
             <DefaultButton
               text="Enviar token"
-              buttonFunction={recoverPassword}
+              buttonFunction={sendToken}
               loading={isSendingMail}
             />
           </LoginButtonView>

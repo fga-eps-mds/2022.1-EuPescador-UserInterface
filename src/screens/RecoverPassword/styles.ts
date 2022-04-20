@@ -44,6 +44,13 @@ export const InputView = styled.View`
   border-radius: ${RFValue(5, 640)}px;
 `;
 
+export const InputTitle = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.regular};
+  font-size: ${RFValue(15, 640)}px;
+  line-height: ${RFValue(22, 640)}px;
+  color: ${({ theme }) => theme.colors.on_background};
+`;
+
 export const InputBox = styled.View`
   margin-bottom: ${RFValue(5, 640)}px;
 `;
