@@ -17,7 +17,7 @@ import {
 } from './styles';
 import { useAuth } from '../../contexts/authContext';
 import { InstructionModal } from '../../components/InstructionsModal';
-import {UsersManager} from "../../screens/UsersManager";
+import {UsersManager} from "../../components/UsersManager";
 
 
 export const WikiFishlogs = ({ navigation, route }: any) => {
@@ -94,7 +94,7 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
       />
       <PageContainer>
         <TopBar
-          title={wiki ? 'Biblioteca' : 'Registros'}
+          title={wiki ? 'Biblioteca' : fishlogTab ? 'Registros' : 'Usuários'}
           icon={isLogged ? 'logout' : 'login'}
           iconText={isLogged ? 'Sair' : 'Entrar'}
           buttonFunction={
