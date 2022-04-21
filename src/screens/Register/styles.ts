@@ -22,10 +22,10 @@ export const TitleHighlight = styled.View`
   background-color: ${({ theme }) => theme.colors.secondary};
 `;
 
-export const TitleText = styled.Text<{ admin: boolean }>`
+export const TitleText = styled.Text<{ admin: boolean, superAdmin : boolean}>`
   font-family: ${({ theme }) =>
     (p) =>
-      p.admin ? theme.fonts.bold : theme.fonts.regular};
+      (p.admin && p.superAdmin)  ? theme.fonts.bold : theme.fonts.regular};
   font-size: ${RFValue(12, 640)}px;
   margin-right: ${RFValue(16, 640)}px;
 `;

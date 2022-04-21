@@ -27,7 +27,6 @@ export function Register({ navigation }: any) {
   const [isSelectedAdmin, setIsSelectedAdmin] = useState(false);
   const [isSelectedUser, setIsSelectedUser] = useState(true);
   const [isSelectedSuperAdmin, setIsSelectedSuperAdmin] = useState(false);
-  const [tabController, setTabController] = useState("user");
   const [superAdmin, setSuperAdmin] = useState(false);
   const [userName, setUserName] = useState<string | undefined>();
   const [userEmail, setUserEmail] = useState<string | undefined>();
@@ -159,51 +158,30 @@ export function Register({ navigation }: any) {
           onPress={() => {
             setAdmin(false);
             setSuperAdmin(false);
-            setTabController("user");
-
-            if (tabController == "user") {
-              setIsSelectedUser(true);
-              setIsSelectedAdmin(false);
-              setIsSelectedSuperAdmin(false);
-            }
           }}
         >
-          <TitleText admin={isSelectedUser}>Usuário</TitleText>
-          {/* {!isSelectedUser ? null : <TitleHighlight />} */}
+          <TitleText admin={!admin} superAdmin={!superAdmin}>Usuário</TitleText>
+          {(!admin && !superAdmin) ? <TitleHighlight /> : null}
         </TouchableTitle>
 
         <TouchableTitle
           onPress={() => {
             setAdmin(true);
             setSuperAdmin(false);
-            setTabController("admin");
-
-            if (tabController == "admin") {
-              setIsSelectedUser(false);
-              setIsSelectedAdmin(true);
-              setIsSelectedSuperAdmin(false);
-            }
           }}
         >
-          <TitleText admin={isSelectedAdmin}>Pesquisador</TitleText>
-          {/* {!isSelectedAdmin ? <TitleHighlight /> : null} */}
+          <TitleText admin={admin} superAdmin={!superAdmin}>Pesquisador</TitleText>
+          {(admin && !superAdmin) ? <TitleHighlight /> : null}
         </TouchableTitle>
 
         <TouchableTitle
           onPress={() => {
             setAdmin(false);
             setSuperAdmin(true);
-            setTabController("super-admin");
-
-            if (tabController == "super-admin") {
-              setIsSelectedUser(false);
-              setIsSelectedAdmin(false);
-              setIsSelectedSuperAdmin(true);
-            }
           }}
         >
-          <TitleText admin={isSelectedSuperAdmin}>Administrador</TitleText>
-          {/* {!isSelectedSuperAdmin ? <TitleHighlight /> : null} */}
+          <TitleText admin={!admin} superAdmin={superAdmin}>Administrador</TitleText>
+          {(!admin && superAdmin) ? <TitleHighlight /> : null}
         </TouchableTitle>
       </TitleContainer>
       {isLoading ? (
