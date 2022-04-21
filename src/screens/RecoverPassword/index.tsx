@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import {
   Container,
   ErrorMessage,
@@ -8,8 +9,9 @@ import {
   InputContainer,
   InputTitle,
   InputView,
-  LoginButtonView,
+  RecoverButtonView,
   HomeLogoContainer,
+  HomeTitle,
   HomeAppImage,
   HomeAppTitle,
   HomeAppTitleBlue,
@@ -17,26 +19,23 @@ import {
 import { DefaultButton } from '../../components/Button';
 import { UserEmail } from '../../services/userServices/userEmail';
 import { SendMail } from '../../services/userServices/sendMail';
-import { UpdateUser } from '../../services/userServices/updatePassword';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import {
+  UpdateUser,
+  VerifyToken,
+} from '../../services/userServices/updatePassword';
+
 
 export default function RecoverPassword() {
-  
   const [userEmailPhone, setUserEmailPhone] = useState<string>('');
   const [token, setToken] = useState<string>('');
-  const [isEmailPhoneValid, setIsEmailPhoneValid] = useState(true);
-  const [isEmailPhoneValidMessage, setIsEmailPhoneValidMessage] = useState(
-    'Usuário não encontrado'
-  );
-  const [isPasswordValid, setIsPasswordValid] = useState(true);
-  const [isPasswordValidMessage, setIsPasswordValidMessage] = useState('');
-  const [newPassword, setNewPassword] = useState<string | undefined>();
-  const [confirmPassword, setConfirmPassword] = useState<string | undefined>();
+  const [userId, setUserId] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string | undefined>('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string | undefined>('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingMail, setIsSendingMail] = useState(false);
   const [tokenValidated, setTokenValidated] = useState(false);
   const [tokenSending, setTokenSending] = useState(false);
+
   const navigation = useNavigation();
 
   const sendToken = async () => {
@@ -47,7 +46,7 @@ export default function RecoverPassword() {
       emails.data.filter((item) => item.email === userEmailPhone).length > 0;
     if (response) {
       setIsSendingMail(true);
-      await SendMail();
+      await SendMail(userEmailPhone);
       setIsSendingMail(false);
       Alert.alert(
         'Token enviado!',
@@ -63,38 +62,51 @@ export default function RecoverPassword() {
   };
 
   const verifyToken = async () => {
+    try {
+      if (token) {
+        const response = await VerifyToken(token);
 
-  }
+        setUserId(response.data.token.user_id)
+        setTokenValidated(true);
 
-  const updatePassword = async () => {
-    
-    if(userEmailPhone && isPasswordValid){
-      await UpdateUser(userEmailPhone, newPassword!);
-      Alert.alert(
-        'Senha alterada!',
-        'Sua senha foi alterada com sucesso!'
-      );
-      navigation.navigate('Login' as never);
+        Alert.alert(
+          'Token válido!',
+          'Token validado com sucesso. Agora, escolha sua nova senha.'
+        );
+      }
+    } catch (error) {
+      let status_code = error.message.match(/\d/g);
+      status_code = status_code.join('');
 
-    }else{
-      Alert.alert(
-        'Senha inválida!',
-        'Digite uma senha que não seja nula!'
-      );
-    }
-  }
-
-  const validatePassword = (password: string) => {
-    if (password !== newPassword) {
-      setIsPasswordValidMessage('Digite a mesma senha!');
-      setIsPasswordValid(false);
-    } else {
-      setIsPasswordValid(true);
+      if (status_code === '404') {
+        Alert.alert(
+          'Token inválido!',
+          'Não conseguimos encontrar o seu token.'
+        );
+      } else {
+        Alert.alert(
+          'Falha no sistema!',
+          'Não conseguimos processar seu token. Gere outro token e tente novamente.'
+        );
+      }
     }
   };
-  const handlePassword = (password: string) => {
-    setConfirmPassword(password);
-    validatePassword(password);
+
+  const updatePassword = async () => {
+    if (newPassword) {
+      if (newPassword === confirmNewPassword) {
+        
+        await UpdateUser(userId, newPassword!);
+        Alert.alert('Senha alterada.', 'Sua senha foi alterada com sucesso!', [
+          { text: 'OK', onPress: () => navigation.navigate('Login' as never) },
+        ]);
+        setTokenValidated(false);
+      } else {
+        Alert.alert('Senha inválida.', 'As senhas não são equivalentes!');
+      }
+    } else {
+      Alert.alert('Senha inválida.', 'Digite uma senha que não seja nula!');
+    }
   };
 
   return (
@@ -104,19 +116,17 @@ export default function RecoverPassword() {
         <HomeAppTitle>
           Eu<HomeAppTitleBlue>Pescador</HomeAppTitleBlue>
         </HomeAppTitle>
+        <HomeTitle>Recuperação de senha</HomeTitle>
       </HomeLogoContainer>
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <InputContainer>
-          {tokenValidated ? null :
-          <>
-            {tokenSending ? (
-              <>
-              
+          {tokenValidated ? (
+            <>
               <InputView>
                 <Input
-                  placeholder="Nova Senha"
+                  placeholder="Nova senha"
                   secureTextEntry
                   value={newPassword}
                   onChangeText={setNewPassword}
@@ -127,63 +137,58 @@ export default function RecoverPassword() {
                 <Input
                   secureTextEntry
                   placeholder="Confirmar nova senha"
-                  value={confirmPassword}
-                  onChangeText={handlePassword}
+                  value={confirmNewPassword}
+                  onChangeText={setConfirmNewPassword}
                 />
               </InputView>
-              {isPasswordValid ? (
-                <InputBox />
-              ) : (
-                <ErrorMessage>{isPasswordValidMessage}</ErrorMessage>
-              )}
 
-              <LoginButtonView>
+              <RecoverButtonView>
                 <DefaultButton
                   text="Atualizar senha"
                   buttonFunction={updatePassword}
                   loading={isSendingMail}
                 />
-              </LoginButtonView>
+              </RecoverButtonView>
             </>
-            ):(
+          ) : (
             <>
-              <InputTitle>Já possui um token? Valide-o abaixo:</InputTitle>
               <InputView>
+                <InputTitle>Já possui um token? Valide-o abaixo:</InputTitle>
                 <Input
                   placeholder="Token"
                   value={token}
                   onChangeText={setToken}
                 />
               </InputView>
-    
-              <InputTitle>
-                Não possui um token? Digite seu email para enviarmos um para você:
-              </InputTitle>
+
+              <RecoverButtonView>
+                <DefaultButton
+                  text="Validar token"
+                  buttonFunction={verifyToken}
+                  loading={isSendingMail}
+                />
+              </RecoverButtonView>
+
               <InputView>
+                <InputTitle>
+                  Não possui um token? Digite seu email para enviarmos um para
+                  você:
+                </InputTitle>
                 <Input
                   placeholder="E-mail"
                   value={userEmailPhone}
                   onChangeText={setUserEmailPhone}
                 />
               </InputView>
+              <RecoverButtonView>
+                <DefaultButton
+                  text="Enviar token"
+                  buttonFunction={sendToken}
+                  loading={isSendingMail}
+                />
+              </RecoverButtonView>
             </>
-            )}
-          </>
-          }
-          {isEmailPhoneValid ? (
-            <InputBox />
-          ) : (
-            <ErrorMessage>{isEmailPhoneValidMessage}</ErrorMessage>
           )}
-          {tokenSending ? null :
-          <LoginButtonView>
-            <DefaultButton
-              text="Enviar token"
-              buttonFunction={sendToken}
-              loading={isSendingMail}
-            />
-          </LoginButtonView>
-          }
         </InputContainer>
       )}
     </Container>
