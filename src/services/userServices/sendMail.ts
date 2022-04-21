@@ -1,9 +1,7 @@
 import { userService } from './userService';
 
-async function SendMail() {
-  let route = "/recover-password";
-
-  userService.get(route);
+async function SendMail(email: string) {
+  userService.post('/recover-password', { email });
 }
 
 export { SendMail };
