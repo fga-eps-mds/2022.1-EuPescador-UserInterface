@@ -5,7 +5,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 export const UserContainer = styled.View`
   align-items: center;
   width: ${RFValue(156, 640)}px;
-  height: ${RFValue(180, 640)}px;
   elevation: 4;
   border-radius: ${RFValue(16, 640)}px;
   background-color: ${({ theme }) => theme.colors.background};

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button } from "react-native";
+import {useNavigation} from '@react-navigation/native';
 import {
   ButtonStyle,
   DeleteButton,
@@ -22,6 +23,12 @@ export interface UserInfo {
 
 export const UserCard = ({data, handleClick}: UserInfo) => {
 
+  const navigation = useNavigation();
+
+  const goToEditionUser = () => {
+    navigation.navigate("EditUserPage", data);
+  }
+
   return (
     // <UserCardView>
     //   <UserCardView>{data.name}</UserCardView>
@@ -37,6 +44,7 @@ export const UserCard = ({data, handleClick}: UserInfo) => {
         <Button onPress={() => {
           handleClick(data.id)
         }}  title="Deletar"/>
+        <Button onPress={goToEditionUser}  title="Editar"/>
     </View>
   );
 };

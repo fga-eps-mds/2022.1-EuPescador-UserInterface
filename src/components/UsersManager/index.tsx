@@ -6,6 +6,7 @@ import { GetAllUsers } from '../../services/userServices/getAllUsers';
 import { UserCard } from '../UserCard';
 import { UserContainer } from './styles';
 import {deleteUser} from "../../services/adminServices/deleteuser";
+import { ActivityIndicator, Alert } from "react-native";
 
 export interface UserInfo {
     id: number,
@@ -21,37 +22,37 @@ export const UsersManager = ({ navigation, route }: any) => {
     const [userList, setUserList] = useState<UserInfo[]>([]);
     const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
     const [token, setToken] = useState<string>();
+    const [isLoading, setIsLoading] = useState(true);
 
     const screamIsFocus = useIsFocused();
 
     const loadList = async () => {
         const res = await GetAllUsers();
-
         setUserList(res);
-        console.log("ABRIU");
     }
 
     const deleteFunc = async (id: number) => {
         
         const res = await deleteUser( id.toString());
         if(res == 200) {
-            console.log("exclui");
             const response = await GetAllUsers();
-
             setUserList(response);
         } else {
-            console.log("deu merda");
+            Alert.alert("Erro ao excluir usário. Tente novamente mais tarde");
         }    
     };
 
     useEffect(() => {
+        setIsLoading(true);
         loadList();
-        
-      }, [screamIsFocus, userList]);
+        setIsLoading(false);
+      }, [screamIsFocus]);
 
     return (
         <UserContainer>
-            {userList.length ? (
+            {isLoading ? (<ActivityIndicator size="large" color="#0000ff" />) 
+            :
+            userList.length ? (
                 <FlatList
                     data={userList}
                     renderItem= {({item}) => (
@@ -60,9 +61,11 @@ export const UsersManager = ({ navigation, route }: any) => {
                 >
                 </FlatList>
             ) :
+            //Fazer Widget sobre lista de usuários vazia
              (<Text>
-                Banana
-            </Text>)}
+                Não existem usuários cadastrados
+            </Text>)
+            }
             
         </UserContainer>
     )

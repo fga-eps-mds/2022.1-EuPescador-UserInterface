@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/HomeScreen';
+import { EditUserPage } from '../screens/EditUserPage';
 import Login from '../screens/Login';
 import { Register } from '../screens/Register';
 import { WikiFishlogs } from '../screens/WikiFishlogs';
@@ -34,6 +35,11 @@ const AuthRoutes = () => {
       }}
     >
       <AuthenticateStack.Screen name="WikiFishlogs" component={WikiFishlogs} />
+      <AuthenticateStack.Screen 
+        name="EditUserPage" 
+        component={EditUserPage} 
+        options={{ title: 'Editar Usuário', headerShown: true }}
+      />
       <AuthenticateStack.Screen name="WikiFilter" component={WikiFilter} />
       <AuthenticateStack.Screen name="LogFilter" component={LogFilter} />
       <AuthenticateStack.Screen
