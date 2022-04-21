@@ -45,6 +45,8 @@ export const InputView = styled.View`
 `;
 
 export const InputTitle = styled.Text`
+  text-align:center;
+  margin:12px;
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(15, 640)}px;
   line-height: ${RFValue(22, 640)}px;
