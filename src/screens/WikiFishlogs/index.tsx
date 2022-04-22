@@ -5,6 +5,7 @@ import { CommonActions } from '@react-navigation/native';
 import { TopBar } from '../../components/TopBar';
 import { Wiki } from '../../components/Wiki';
 import { FishLogs } from '../../components/FishLogs';
+import * as Location from 'expo-location';
 import {
   PageContainer,
   TitleContainer,
@@ -19,16 +20,20 @@ import { useAuth } from '../../contexts/authContext';
 import { InstructionModal } from '../../components/InstructionsModal';
 import {UsersManager} from "../../components/UsersManager";
 
+import { LogsMap } from '../LogsMap';
 
 export const WikiFishlogs = ({ navigation, route }: any) => {
 
   const [token, setToken] = useState('');
   const [wiki, setWiki] = useState(true);
   const [fishlogTab, setFishLogTab] = useState<boolean>(false);
+  const [mapTab, setMapTab] = useState<boolean>(false);
   const [isLogged, setIsLogged] = useState<boolean>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [showModal, setShowModal] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>();
+  const [origin, setOrigin] = useState<any>('');
+  
   const { signOut } = useAuth();
 
   const getData = async () => {
@@ -81,6 +86,19 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
     }
   }
 
+  const getPosition = async ()=>{
+    let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+    setOrigin({
+      latitude: loc.coords.latitude,
+      longitude:loc.coords.longitude,
+      latitudeDelta:0.0922,
+      longitudeDelta:0.0922,
+    });
+ 
+  }
+
+  
+
   useEffect(() => {
     getData();
     getFirstAcess();
@@ -94,7 +112,8 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
       />
       <PageContainer>
         <TopBar
-          title={wiki ? 'Biblioteca' : fishlogTab ? 'Registros' : 'Usuários'}
+          //Adicionar parada do mapa
+          title={wiki ? 'Biblioteca' : fishlogTab ? 'Registros' : mapTab ? 'Mapa' : 'Usuários'}
           icon={isLogged ? 'logout' : 'login'}
           iconText={isLogged ? 'Sair' : 'Entrar'}
           buttonFunction={
@@ -112,30 +131,48 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
                 onPress={() => {
                   setWiki(true);
                   setFishLogTab(false);
+                  setMapTab(false);
                 }}
               >
-                <TitleText wiki={wiki} fishLogTab={!fishlogTab}>Biblioteca de Peixes</TitleText>
-                {wiki && !fishlogTab  ? <TitleHighlight /> : null}
+                <TitleText wiki={wiki} fishLogTab={!fishlogTab} mapTab={!mapTab}>Biblioteca de Peixes</TitleText>
+                {wiki && !fishlogTab  && !mapTab ? <TitleHighlight /> : null}
               </TouchableTitle>
+
               <TouchableTitle
                 onPress={() => {
                   setWiki(false);
                   setFishLogTab(true);
+                  setMapTab(false);
                 }}
               >
-                <TitleText wiki={!wiki} fishLogTab={fishlogTab}>Registros</TitleText>
-                {(!wiki && fishlogTab)  ? <TitleHighlight /> : null}
+                <TitleText wiki={!wiki} fishLogTab={fishlogTab} mapTab={!mapTab}>Registros</TitleText>
+                {(!wiki && fishlogTab && !mapTab)  ? <TitleHighlight /> : null}
+              </TouchableTitle>
+              <TouchableTitle
+                onPress={() => {
+                  setWiki(false);
+                  setFishLogTab(false);
+                  setMapTab(true);
+                  getPosition();
+                }}
+              >
+                <TitleText wiki={!wiki} fishLogTab={!fishlogTab} mapTab={mapTab}>Mapa</TitleText>
+                {(!wiki && !fishlogTab && mapTab)  ? <TitleHighlight /> : null}
+              
               </TouchableTitle>
               {isSuperAdmin ? (
               <TouchableTitle
                 onPress={() => {
                   setWiki(false);
                   setFishLogTab(false);
+                  setMapTab(false);
                 }}
               >
-                <TitleText wiki={!wiki} fishLogTab={!fishlogTab}>Usuários</TitleText>
-                {(!wiki && !fishlogTab)  ? <TitleHighlight /> : null}
+                <TitleText wiki={!wiki} fishLogTab={!fishlogTab} mapTab={!mapTab}>Usuários</TitleText>
+                {(!wiki && !fishlogTab && !mapTab)  ? <TitleHighlight /> : null}
               </TouchableTitle>) : null}
+
+
             </TitleButtonsContainer>
             <InstructionButton onPress={() => { setShowModal(true) }}>
               <InstructionButtonIcon name="info" />
@@ -151,7 +188,18 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
             navigation={navigation}
             isAdmin={isAdmin ? isAdmin : false}
             filterQuery={(route.params && route.params.logFilterQuery) ? route.params.logFilterQuery : null}
-          />)  : (<UsersManager></UsersManager>) 
+          />)  : mapTab ? (
+              <LogsMap
+                latitude = {origin.latitude}
+                longitude = {origin.longitude}
+                latitudeDelta = {origin.latitudeDelta}
+                longitudeDelta= {origin.longitudeDelta}
+                token={token} 
+                navigation={navigation}
+                isAdmin={isAdmin ? isAdmin : false}
+                filterQuery={(route.params && route.params.logFilterQuery) ? route.params.logFilterQuery : null}
+              />
+            ) : (<UsersManager />) 
         }
       </PageContainer>
     </>

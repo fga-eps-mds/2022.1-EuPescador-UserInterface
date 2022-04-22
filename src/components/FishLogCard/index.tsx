@@ -26,6 +26,7 @@ export interface IFishLog {
   weight: number;
   reviewed: boolean;
   reviewedBy: number;
+  visible: boolean;
   createdAt: Date;
   updatedAt: Date;
   updatedBy: number;

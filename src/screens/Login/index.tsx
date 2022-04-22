@@ -16,6 +16,8 @@ import {
   HomePhraseContainer,
   HomeRegularText,
   HomeLogLink,
+  ForgotPasswordLogLink,
+  ForgotPasswordContainer,
 } from './styles';
 import { useAuth } from '../../contexts/authContext';
 import { DefaultButton } from '../../components/Button';
@@ -88,6 +90,11 @@ export default function Login({ navigation }: any) {
           <LoginButtonView>
             <DefaultButton text="Entrar" buttonFunction={handleLogin} />
           </LoginButtonView>
+          <ForgotPasswordContainer>
+            <TouchableOpacity  onPress={() => navigation.navigate('RecoverPassword')}>
+              <ForgotPasswordLogLink>Esqueci minha Senha</ForgotPasswordLogLink>
+            </TouchableOpacity>
+          </ForgotPasswordContainer>
           <HomePhraseContainer>
             <HomeRegularText>Não possui uma conta ainda?</HomeRegularText>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>

@@ -9,7 +9,7 @@ import { CommonActions } from '@react-navigation/native';
 import { GetWikiFishes } from '../../services/wikiServices/getWikiFishes';
 import { RegularText } from '../../components/RegularText';
 import { HalfToneText } from '../../components/HalfToneText';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Switch } from 'react-native-paper';
 import { createFishLog } from '../../services/fishLogService/createFishLog';
 import { GetOneFishLog } from '../../services/fishLogService/getOneFishLog';
 import { UpdateFishLog } from '../../services/fishLogService/updateFishLog';
@@ -81,6 +81,7 @@ export function NewFishLog({ navigation, route }: any) {
   const [isDraft, setIsDraft] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
   const [fishFamily, setFishFamily] = useState<string | undefined>();
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const getFishOptions = async () => {
     let newFishes: IFish[] = [];
@@ -145,6 +146,7 @@ export function NewFishLog({ navigation, route }: any) {
       setFishFamily(log?.family || undefined);
       setFishLongitude(log?.coordenates?.longitude?.toString() || undefined);
       setFishLatitude(log?.coordenates?.latitude?.toString() || undefined);
+      setIsVisible(log?.visible || undefined);
     } catch (error) {
       console.log(error);
     }
@@ -212,6 +214,7 @@ export function NewFishLog({ navigation, route }: any) {
         reviewed,
         isAdmin,
         isSuperAdmin,
+        isVisible
       );
       alertMessage = "Registro atualizado com sucesso";
       alertTitle = 'Editar registro'
@@ -262,6 +265,7 @@ export function NewFishLog({ navigation, route }: any) {
           fishLength,
           fishLatitude,
           fishLongitude,
+          isVisible
         );
         alertMessage = 'Registro criado com sucesso!';
         await deleteDraft();
@@ -379,6 +383,7 @@ export function NewFishLog({ navigation, route }: any) {
       length: fishLength,
       latitude: fishLatitude,
       longitude: fishLongitude,
+      visible: isVisible
     };
     let newDrafts;
     if (drafts != null) {
@@ -449,6 +454,7 @@ export function NewFishLog({ navigation, route }: any) {
       setFishFamily(data?.family);
       setFishLatitude(data?.latitude?.toString());
       setFishLongitude(data?.longitude?.toString());
+      setIsVisible(data?.visible);
       if (data.photo) {
         const log64 = Buffer.from(data.photo).toString('base64');
         setFishPhoto(log64);
@@ -559,6 +565,15 @@ export function NewFishLog({ navigation, route }: any) {
           </ImageContainer>
 
           <InputContainer>
+          {isAdmin ? (
+            <ImageContainer>
+              <Switch
+                value={isVisible}
+                onValueChange={() => setIsVisible(!isVisible)}
+              />
+              <TextClick>Visível no mapa?</TextClick>
+            </ImageContainer>
+          ) : null}
             <InputView>
               <Input
                 placeholder="Nome"

@@ -16,6 +16,7 @@ async function UpdateFishLog(
     reviewed: boolean | undefined,
     admin: Boolean,
     superAdmin: Boolean,
+    visible: boolean
 ) {
     const userId = await AsyncStorage.getItem("@eupescador/userId");
     const token = await AsyncStorage.getItem("@eupescador/token");
@@ -43,8 +44,9 @@ async function UpdateFishLog(
         length: length ? parseFloat(length) : null,
         weight: weight ? parseFloat(weight) : null,
         reviewed,
-        reviewedBy,
-        updatedBy: userId,
+        reviewedBy: Number(reviewedBy),
+        updatedBy: Number(userId),
+        visible
     }, { headers: { Authorization: userToken } });
     return res.data;
 }
