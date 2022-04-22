@@ -30,7 +30,8 @@ export const UserCard = ({ data, handleClick }: UserInfo) => {
   return (
     <Container>
       <HeaderContainer>
-        <Name>{data.name} - ID: {data.id}</Name>
+        <Name>{data.name}</Name>
+        <Name>{data.email}</Name>
       </HeaderContainer>
       <ItemButton>
         <TextButton

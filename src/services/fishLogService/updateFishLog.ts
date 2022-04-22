@@ -15,6 +15,7 @@ async function UpdateFishLog(
     weight: string | undefined,
     reviewed: boolean | undefined,
     admin: Boolean,
+    superAdmin: Boolean,
 ) {
     const userId = await AsyncStorage.getItem("@eupescador/userId");
     const token = await AsyncStorage.getItem("@eupescador/token");
@@ -22,7 +23,7 @@ async function UpdateFishLog(
     let photo = null;
     let reviewedBy = null;
 
-    if (admin)
+    if (admin || superAdmin)
         reviewedBy = userId;
 
     const coordenates = {

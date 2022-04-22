@@ -54,7 +54,6 @@ export const UsersManager = ({ navigation, route }: any) => {
             {isLoading ? (<ActivityIndicator size="large" color="#0000ff" />) 
             :
             userList.length ? (
-                <ScrollView nestedScrollEnabled={true}>
                     <UserFlatList
                         data={userList}
                         renderItem= {({item}) => (
@@ -62,7 +61,6 @@ export const UsersManager = ({ navigation, route }: any) => {
                         )}
                     >
                     </UserFlatList>
-                </ScrollView>
             ) :
              (<Text>
                 Não existem usuários cadastrados
