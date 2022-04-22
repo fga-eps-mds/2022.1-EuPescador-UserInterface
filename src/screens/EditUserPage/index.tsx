@@ -14,11 +14,7 @@ import {
   InputView,
   MaterialInputIcon,
   RegisterButtonView,
-  TitleContainer,
-  TitleHighlight,
-  TitleText,
-  TouchableTitle,
-} from "../Register/styles";
+} from "./styles";
 import { DefaultButton } from "../../components/Button";
 import { editUser } from "../../services/adminServices/editUser";
 
@@ -44,12 +40,13 @@ export function EditUserPage({ navigation, route}: any) {
         const res = await editUser(userName, userEmail, userPhone, userState, userCity);
         if(res.status == 200) {
             setIsLoading(false);
+            Alert.alert("Alterações salvas", "O usuário foi editado com sucesso");
             navigation.goBack();
         } else {
             //Inserir um alert de erro
             //Muxar mensagem de erro via backend User
             setIsLoading(false);
-            console.log("Erro ao editar o usuário");
+            console.log("Erro","Erro ao editar o usuário");
         }
     } else {
         setIsLoading(false);

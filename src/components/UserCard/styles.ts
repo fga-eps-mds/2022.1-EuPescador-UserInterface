@@ -1,27 +1,32 @@
-// import styled from "styled-components/native";
-// import { RFValue } from "react-native-responsive-fontsize";
-// import { MaterialIcons } from '@expo/vector-icons';
+import styled from "styled-components/native";
 
-// export const View = styled.View`
-//   align-items: center;
-//   width: ${RFValue(156, 640)}px;
-//   height: ${RFValue(180, 640)}px;
-//   border-radius: ${RFValue(8, 640)}px;
-//   background-color: ${({ theme }) => theme.colors.background};
-//   margin-bottom: 24px;
-// `;
+export const Container = styled.View`
+  min-width: 160px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px #B9BBBD;
+`;
 
-// export const Text = styled.Text`
-//   color: black;
-//   font-family: ${({ theme }) => theme.fonts.bold};
-//   font-size: ${RFValue(12, 640)}px;
-// `;
+export const HeaderContainer = styled.View`
+  background-color: #B9BBBD;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  min-width: 160px;
+`;
 
-// export const Button = styled.TouchableOpacity`
-//   width: ${RFValue(156, 640)}px;
-//   height: ${RFValue(39, 640)}px;
-//   border-radius: ${RFValue(5, 640)}px;
-//   background-color: ${({ theme }) => theme.colors.secondary_dark};
-//   align-items: center;
-// `;
+export const Name = styled.Text`
+  text-align: center;
+  padding: 5px 2px;
+`;
 
+export const TextButton = styled.Text`
+  color: #00BBD4;
+  text-align: center;
+  padding: 5px 2px;
+  text-decoration: underline;
+`;
+
+export const ItemButton = styled.View`
+  display: flex;
+  flex: 0;
+`;

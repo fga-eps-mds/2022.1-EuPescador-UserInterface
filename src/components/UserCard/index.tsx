@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Button } from "react-native";
-import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
-  ButtonStyle,
-  DeleteButton,
-  DeleteButtonText,
-  DeleteIcon,
-  UserCardView,
-} from "./styles";
+  Container,
+  Name,
+  ItemButton,
+  HeaderContainer,
+  TextButton,
+} from './styles';
 
 export interface UserInfo {
   data: {
@@ -18,33 +17,31 @@ export interface UserInfo {
     estate: string;
     city: string;
   };
-  handleClick(id : number) : void;
+  handleClick(id: number): void;
 }
 
-export const UserCard = ({data, handleClick}: UserInfo) => {
-
+export const UserCard = ({ data, handleClick }: UserInfo) => {
   const navigation = useNavigation();
 
   const goToEditionUser = () => {
-    navigation.navigate("EditUserPage", data);
-  }
+    navigation.navigate('EditUserPage', data);
+  };
 
   return (
-    // <UserCardView>
-    //   <UserCardView>{data.name}</UserCardView>
-    //   {/* <ButtonStyle>
-    //     <DeleteButton onPress={deleteFunc}>
-    //       <DeleteButtonText>Deletar</DeleteButtonText>
-    //       <DeleteIcon name="delete" />
-    //     </DeleteButton>
-    //   </ButtonStyle> */}
-    // </UserCardView>
-    <View>
-        <Text>{data.name}</Text>
-        <Button onPress={() => {
-          handleClick(data.id)
-        }}  title="Deletar"/>
-        <Button onPress={goToEditionUser}  title="Editar"/>
-    </View>
+    <Container>
+      <HeaderContainer>
+        <Name>{data.name}</Name>
+      </HeaderContainer>
+      <ItemButton>
+        <TextButton
+          onPress={() => {
+            handleClick(data.id);
+          }}
+        >
+          Deletar Usuário
+        </TextButton>
+        <TextButton onPress={goToEditionUser}>Editar Informações</TextButton>
+      </ItemButton>
+    </Container>
   );
 };

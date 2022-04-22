@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {useIsFocused} from '@react-navigation/native'; 
-import { View, Text } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
+import { Text } from 'react-native';
 import { GetAllUsers } from '../../services/userServices/getAllUsers';
 import { UserCard } from '../UserCard';
-import { UserContainer } from './styles';
+import { UserContainer, UserFlatList } from './styles';
 import {deleteUser} from "../../services/adminServices/deleteuser";
 import { ActivityIndicator, Alert } from "react-native";
 
@@ -37,6 +37,7 @@ export const UsersManager = ({ navigation, route }: any) => {
         if(res == 200) {
             const response = await GetAllUsers();
             setUserList(response);
+            Alert.alert("Usuário excluído", "O usuário foi excluído com sucesso");
         } else {
             Alert.alert("Erro ao excluir usário. Tente novamente mais tarde");
         }    
@@ -53,20 +54,20 @@ export const UsersManager = ({ navigation, route }: any) => {
             {isLoading ? (<ActivityIndicator size="large" color="#0000ff" />) 
             :
             userList.length ? (
-                <FlatList
-                    data={userList}
-                    renderItem= {({item}) => (
-                        <UserCard data={item} handleClick={deleteFunc}/>
-                    )}
-                >
-                </FlatList>
+                <ScrollView nestedScrollEnabled={true}>
+                    <UserFlatList
+                        data={userList}
+                        renderItem= {({item}) => (
+                            <UserCard data={item} handleClick={deleteFunc}/>
+                        )}
+                    >
+                    </UserFlatList>
+                </ScrollView>
             ) :
-            //Fazer Widget sobre lista de usuários vazia
              (<Text>
                 Não existem usuários cadastrados
             </Text>)
             }
-            
         </UserContainer>
     )
 }
