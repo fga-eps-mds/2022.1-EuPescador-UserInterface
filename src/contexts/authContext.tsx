@@ -15,7 +15,6 @@ interface IAuthContext {
   authenticated: boolean | undefined;
   signIn: (email: string, password: string) => Promise<any>;
   signOut: () => Promise<void>;
-  validEmail: ()=>Promise<any>;
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -70,15 +69,6 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
       setAuthenticated(true);
       setUserId(result.data.id);
       return result;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  async function validEmail() {
-    try {
-      const result = await UserEmail();
-      
     } catch (error) {
       return error;
     }
