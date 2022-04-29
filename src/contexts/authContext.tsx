@@ -36,9 +36,9 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   const handleAutenticate = async () => {
     const values = await getValues();
     if (values.token && values._userId) {
-      userService.defaults.headers.Authorization = `Bearer ${values.token}`;
+      userService.defaults.headers.authorization = `Bearer ${values.token}`;
       setAuthenticated(true);
-      setUserId(JSON.stringify(values._userId));
+      setUserId(values._userId);
     } else {
       setAuthenticated(false);
     }
@@ -105,6 +105,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
               fish[i].length,
               fish[i].coordenates.latitude,
               fish[i].coordenates.longitude,
+              fish[i].visible
             );
           }
           await AsyncStorage.removeItem('@eupescador/newfish');
