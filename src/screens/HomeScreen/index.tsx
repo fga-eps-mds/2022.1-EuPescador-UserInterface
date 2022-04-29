@@ -16,8 +16,10 @@ import {
 } from './styles';
 import { useAuth } from '../../contexts/authContext';
 
+
 export default function Home({ navigation }: any) {
   const { authenticated } = useAuth();
+  
   useEffect(() => {
     if (authenticated) {
       navigation.navigate('WikiFishlogs', {

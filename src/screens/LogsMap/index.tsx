@@ -5,27 +5,25 @@ import { GetAllFishLogs } from '../../services/fishLogService/getAllLogs';
 import { IFishLog } from '../../components/FishLogCard';
 import { Container } from './styles';
 import { Imagem } from './styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, token, navigation, isAdmin, filterQuery }: any) => {
 
   const [fishLogs, setFishLogs] = useState<IFishLog[]>([]);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   
   async function updateFishLogs() {
     const data = await GetAllFishLogs(token, filterQuery);
-
     setFishLogs(data as IFishLog[]);
-    
+    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
+    if (userSuperAdmin === 'true') {
+      setIsSuperAdmin(true);
+    }
   }
     
   useEffect(() => {
     updateFishLogs();
-    
-    
   }, []);
-
-  // const handleDrag = (e: MapEvent) => {
-  //   setMark(e.nativeEvent.coordinate);
-  // };
   return (
     
     <Container>
@@ -44,11 +42,12 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
           
         >
           {
-            isAdmin ? (
+            isAdmin || isSuperAdmin ? (
               fishLogs.map(log => {
                 if(log.reviewed){
                 return (
                   <Marker
+                    key={log.id}
                     coordinate={{
                       latitude: log.coordenates.latitude,
                       longitude: log.coordenates.longitude
@@ -71,6 +70,7 @@ export const LogsMap = ({ latitude, longitude,latitudeDelta,longitudeDelta, toke
                   return (         
                     
                         <Marker
+                            key={log.id}
                             coordinate={{
                             latitude: log.coordenates.latitude,
                             longitude: log.coordenates.longitude,

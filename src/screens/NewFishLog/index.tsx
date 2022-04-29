@@ -62,6 +62,8 @@ export interface IFish {
 export function NewFishLog({ navigation, route }: any) {
   const [isNew, setIsNew] = useState(false);
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<Boolean>(false);
+  const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [fishes, setFishes] = useState<IFish[]>([]);
   const [fishPhoto, setFishPhoto] = useState<string | undefined | undefined>();
   const [fishName, setFishName] = useState<string | undefined>();
@@ -107,14 +109,24 @@ export function NewFishLog({ navigation, route }: any) {
   const getData = async () => {
     const id = await AsyncStorage.getItem("@eupescador/userId");
     const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
+    const userSuperAdmin = await AsyncStorage.getItem("@eupescador/userSuperAdmin");
     const token = await AsyncStorage.getItem("@eupescador/token");
     if (token) {
       getFishLogProperties(token);
     }
-    if (userAdmin === "true")
+    if (userAdmin === 'true') {
       setIsAdmin(true);
-    else
+      setIsSuperAdmin(false);
+      setCanEdit(true);
+    } else if (userSuperAdmin === 'true') {
       setIsAdmin(false);
+      setIsSuperAdmin(true);
+      setCanEdit(true);
+    } else {
+      setIsAdmin(false);
+      setIsSuperAdmin(false);
+      setCanEdit(false);
+    }
   }
 
   const getFishLogProperties = async (token: string) => {
@@ -183,7 +195,7 @@ export function NewFishLog({ navigation, route }: any) {
     let alertTitle = '';
     const { log_id } = route.params;
     let reviewed = false;
-    if (isAdmin) {
+    if (isAdmin || isSuperAdmin) {
       reviewed = true;
     }
 
@@ -201,6 +213,7 @@ export function NewFishLog({ navigation, route }: any) {
         fishWeight,
         reviewed,
         isAdmin,
+        isSuperAdmin,
         isVisible
       );
       alertMessage = "Registro atualizado com sucesso";
@@ -399,7 +412,7 @@ export function NewFishLog({ navigation, route }: any) {
   }
 
   const getSendButton = () => {
-    let text = isNew || !isAdmin ? "Enviar" : "Revisar";
+    let text = isNew || !canEdit ? "Enviar" : "Revisar";
     let handleButton: () => void;
     if (isNew) {
       if (true) {
@@ -552,7 +565,7 @@ export function NewFishLog({ navigation, route }: any) {
           </ImageContainer>
 
           <InputContainer>
-          {isAdmin ? (
+          {isSuperAdmin ? (
             <ImageContainer>
               <Switch
                 value={isVisible}

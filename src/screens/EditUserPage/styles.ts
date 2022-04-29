@@ -4,6 +4,7 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { TextInputMask } from "react-native-masked-text";
 
 export const Container = styled.View`
+  padding-top: 30px;
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
 `;
@@ -105,4 +106,5 @@ export const ComunityInputIcon = styled(MaterialCommunityIcons)`
 `;
 export const RegisterButtonView = styled.View`
   align-items: center;
+  padding-top: 30px;
 `;

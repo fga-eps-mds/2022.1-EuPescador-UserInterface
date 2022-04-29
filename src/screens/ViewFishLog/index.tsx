@@ -33,6 +33,7 @@ export const FishLog = ({ navigation, route }: any) => {
   const [fishWeight, setFishWeight] = useState<number>();
   const [fishLength, setFishLength] = useState<number>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>();
   const [isLoading, setIsLoading] = useState(true);
   const [logId, setLogId] = useState('');
   const [isReviewed, setIsReviewed] = useState(false);
@@ -42,13 +43,22 @@ export const FishLog = ({ navigation, route }: any) => {
 
   const getData = async () => {
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
+    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
     const token = await AsyncStorage.getItem('@eupescador/token');
     if (token) {
       getFishLogProperties(token);
       setUserToken(token);
     }
-    if (userAdmin === 'true') setIsAdmin(true);
-    else setIsAdmin(false);
+    if (userAdmin === 'true') {
+      setIsAdmin(true);
+      setIsSuperAdmin(false);
+    } else if (userSuperAdmin === 'true') {
+      setIsAdmin(false);
+      setIsSuperAdmin(true);
+    } else {
+      setIsAdmin(false);
+      setIsSuperAdmin(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -206,7 +216,7 @@ export const FishLog = ({ navigation, route }: any) => {
 
           {connection.isConnected ? (
             <RegisterButtonView>
-              {isAdmin ? (
+              {(isAdmin || isSuperAdmin) ? (
                 <>
                   <DefaultButton
                     text="Revisar"
