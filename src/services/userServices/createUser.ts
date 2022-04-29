@@ -9,6 +9,8 @@ async function CreateUser(
   password: string,
   admin: boolean,
   token?: string,
+  superAdmin?: boolean,
+  superToken?: string,
 ) {
   await userService.post('/user/', {
     name,
@@ -19,6 +21,8 @@ async function CreateUser(
     password,
     admin,
     token,
+    superAdmin,
+    superToken,
   });
 }
 

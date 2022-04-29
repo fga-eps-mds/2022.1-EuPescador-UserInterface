@@ -9,7 +9,7 @@ import { CommonActions } from '@react-navigation/native';
 import { GetWikiFishes } from '../../services/wikiServices/getWikiFishes';
 import { RegularText } from '../../components/RegularText';
 import { HalfToneText } from '../../components/HalfToneText';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Switch } from 'react-native-paper';
 import { createFishLog } from '../../services/fishLogService/createFishLog';
 import { GetOneFishLog } from '../../services/fishLogService/getOneFishLog';
 import { UpdateFishLog } from '../../services/fishLogService/updateFishLog';
@@ -62,6 +62,8 @@ export interface IFish {
 export function NewFishLog({ navigation, route }: any) {
   const [isNew, setIsNew] = useState(false);
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<Boolean>(false);
+  const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [fishes, setFishes] = useState<IFish[]>([]);
   const [fishPhoto, setFishPhoto] = useState<string | undefined | undefined>();
   const [fishName, setFishName] = useState<string | undefined>();
@@ -79,6 +81,7 @@ export function NewFishLog({ navigation, route }: any) {
   const [isDraft, setIsDraft] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
   const [fishFamily, setFishFamily] = useState<string | undefined>();
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const getFishOptions = async () => {
     let newFishes: IFish[] = [];
@@ -104,16 +107,25 @@ export function NewFishLog({ navigation, route }: any) {
   }
 
   const getData = async () => {
-    const id = await AsyncStorage.getItem("@eupescador/userId");
     const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
+    const userSuperAdmin = await AsyncStorage.getItem("@eupescador/userSuperAdmin");
     const token = await AsyncStorage.getItem("@eupescador/token");
     if (token) {
       getFishLogProperties(token);
     }
-    if (userAdmin === "true")
+    if (userAdmin === 'true') {
       setIsAdmin(true);
-    else
+      setIsSuperAdmin(false);
+      setCanEdit(true);
+    } else if (userSuperAdmin === 'true') {
       setIsAdmin(false);
+      setIsSuperAdmin(true);
+      setCanEdit(true);
+    } else {
+      setIsAdmin(false);
+      setIsSuperAdmin(false);
+      setCanEdit(false);
+    }
   }
 
   const getFishLogProperties = async (token: string) => {
@@ -133,6 +145,7 @@ export function NewFishLog({ navigation, route }: any) {
       setFishFamily(log?.family || undefined);
       setFishLongitude(log?.coordenates?.longitude?.toString() || undefined);
       setFishLatitude(log?.coordenates?.latitude?.toString() || undefined);
+      setIsVisible(log?.visible || undefined);
     } catch (error) {
       console.log(error);
     }
@@ -181,12 +194,12 @@ export function NewFishLog({ navigation, route }: any) {
     let alertTitle = '';
     const { log_id } = route.params;
     let reviewed = false;
-    if (isAdmin) {
+    if (isAdmin || isSuperAdmin) {
       reviewed = true;
     }
 
     try {
-      const res = await UpdateFishLog(
+      await UpdateFishLog(
         log_id,
         fishName,
         fishLargeGroup,
@@ -198,7 +211,9 @@ export function NewFishLog({ navigation, route }: any) {
         fishLength,
         fishWeight,
         reviewed,
-        isAdmin
+        isAdmin,
+        isSuperAdmin,
+        isVisible
       );
       alertMessage = "Registro atualizado com sucesso";
       alertTitle = 'Editar registro'
@@ -249,6 +264,7 @@ export function NewFishLog({ navigation, route }: any) {
           fishLength,
           fishLatitude,
           fishLongitude,
+          isVisible
         );
         alertMessage = 'Registro criado com sucesso!';
         await deleteDraft();
@@ -322,7 +338,6 @@ export function NewFishLog({ navigation, route }: any) {
     }
     const connection = await NetInfo.fetch();
     setIsConnected(!!connection.isConnected);
-    // if ((connection.isConnected)) {
       setIsLoading(true);
       let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setIsLoading(false);
@@ -347,10 +362,6 @@ export function NewFishLog({ navigation, route }: any) {
         log_id,
         screenName: name
       })
-    // }
-    // else {
-    //   Alert.alert("Sem conexão", "Você não possui conexão atualmente e por conta disso não poderá abrir o mapa, mas não se preocupe você pode inserir as outras informações e salvar o registro como rascunho para adicionar a localização posteriormente");
-    // }
   }
 
   const saveDraft = async () => {
@@ -366,6 +377,7 @@ export function NewFishLog({ navigation, route }: any) {
       length: fishLength,
       latitude: fishLatitude,
       longitude: fishLongitude,
+      visible: isVisible
     };
     let newDrafts;
     if (drafts != null) {
@@ -394,7 +406,7 @@ export function NewFishLog({ navigation, route }: any) {
   }
 
   const getSendButton = () => {
-    let text = isNew || !isAdmin ? "Enviar" : "Revisar";
+    let text = isNew || !canEdit ? "Enviar" : "Revisar";
     let handleButton: () => void;
     if (isNew) {
       if (true) {
@@ -420,8 +432,6 @@ export function NewFishLog({ navigation, route }: any) {
     const connection = await NetInfo.fetch();
     const hasConnection = !!connection.isConnected;
     setIsConnected(hasConnection);
-    // if (hasConnection) {
-    // }
     getFishOptions();
     const { data, isNewRegister, isFishLogDraft, fishLogDraftId } = route.params;
     setIsNew(isNewRegister);
@@ -436,6 +446,7 @@ export function NewFishLog({ navigation, route }: any) {
       setFishFamily(data?.family);
       setFishLatitude(data?.latitude?.toString());
       setFishLongitude(data?.longitude?.toString());
+      setIsVisible(data?.visible);
       if (data.photo) {
         const log64 = Buffer.from(data.photo).toString('base64');
         setFishPhoto(log64);
@@ -450,8 +461,6 @@ export function NewFishLog({ navigation, route }: any) {
         getData();
       }
     }
-    // if (!hasConnection)
-    //   Alert.alert("Sem conexão", "Você está conexão, logo algumas ações dentro de criação e edição serão limitadas.")
     setIsLoading(false);
   }
 
@@ -522,7 +531,6 @@ export function NewFishLog({ navigation, route }: any) {
 
   return (
     <NewFishLogContainer>
-
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) :
@@ -546,6 +554,15 @@ export function NewFishLog({ navigation, route }: any) {
           </ImageContainer>
 
           <InputContainer>
+          {isSuperAdmin ? (
+            <ImageContainer>
+              <Switch
+                value={isVisible}
+                onValueChange={() => setIsVisible(!isVisible)}
+              />
+              <TextClick>Visível no mapa?</TextClick>
+            </ImageContainer>
+          ) : null}
             <InputView>
               <Input
                 placeholder="Nome"

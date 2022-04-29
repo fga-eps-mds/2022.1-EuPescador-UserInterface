@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userService } from '../services/userServices/userService';
 import { UserLogin } from '../services/userServices/login';
+import { UserEmail } from '../services/userServices/userEmail';
 import { createFishLog } from '../services/fishLogService/createFishLog';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -28,15 +29,16 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     const token = await AsyncStorage.getItem('@eupescador/token');
     const _userId = await AsyncStorage.getItem('@eupescador/userId');
     const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
+    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
 
-    return { token, _userId, userAdmin };
+    return { token, _userId, userAdmin, userSuperAdmin };
   }
   const handleAutenticate = async () => {
     const values = await getValues();
     if (values.token && values._userId) {
-      userService.defaults.headers.Authorization = `Bearer ${values.token}`;
+      userService.defaults.headers.authorization = `Bearer ${values.token}`;
       setAuthenticated(true);
-      setUserId(JSON.stringify(values._userId));
+      setUserId(values._userId);
     } else {
       setAuthenticated(false);
     }
@@ -54,6 +56,10 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
       await AsyncStorage.setItem(
         '@eupescador/userAdmin',
         JSON.stringify(result.data.admin),
+      );
+      await AsyncStorage.setItem(
+        '@eupescador/userSuperAdmin',
+        JSON.stringify(result.data.superAdmin),
       );
       const hasAcessTheApp = await AsyncStorage.getItem('hasAcessTheApp');
       if (!!hasAcessTheApp == false) {
@@ -74,6 +80,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
     await AsyncStorage.removeItem('@eupescador/token');
     await AsyncStorage.removeItem('@eupescador/userId');
     await AsyncStorage.removeItem('@eupescador/userAdmin');
+    await AsyncStorage.removeItem('@eupescador/userSuperAdmin');
     await AsyncStorage.removeItem('drafts');
     userService.defaults.headers.Authorization = undefined;
   }
@@ -98,6 +105,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
               fish[i].length,
               fish[i].coordenates.latitude,
               fish[i].coordenates.longitude,
+              fish[i].visible
             );
           }
           await AsyncStorage.removeItem('@eupescador/newfish');

@@ -363,4 +363,3 @@ export const FishLogs = (
     </Container >
   );
 };
-

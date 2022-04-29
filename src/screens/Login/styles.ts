@@ -67,7 +67,21 @@ export const ErrorMessage = styled.Text`
 
 export const LoginButtonView = styled.View`
   align-items: center;
-  margin: ${RFValue(32, 640)}px 0;
+  margin: ${RFValue(32, 640)}px 0px 5px 0px;
+  
+`;
+
+export const ForgotPasswordContainer = styled.View`
+  align-items: center;
+  margin: ${RFValue(4, 640)}px 0px 15px 0px;
+`;
+
+export const ForgotPasswordLogLink = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bold};
+  font-size: ${RFValue(10.5, 640)}px;
+  line-height: ${RFValue(18, 640)}px;
+  color: #3CB371;
+  text-decoration: underline;
 `;
 
 export const HomePhraseContainer = styled.View`

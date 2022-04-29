@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/HomeScreen';
+import { EditUserPage } from '../screens/EditUserPage';
 import Login from '../screens/Login';
 import { Register } from '../screens/Register';
 import { WikiFishlogs } from '../screens/WikiFishlogs';
@@ -13,6 +14,7 @@ import { WikiFish } from '../screens/WikiFish';
 import { Drafts } from '../screens/Drafts';
 import { WikiFilter } from '../screens/WikiFilter';
 import { LogFilter } from '../screens/RegisterFilter';
+import RecoverPassword from '../screens/RecoverPassword';
 
 const AuthenticateStack = createNativeStackNavigator();
 
@@ -34,6 +36,11 @@ const AuthRoutes = () => {
       }}
     >
       <AuthenticateStack.Screen name="WikiFishlogs" component={WikiFishlogs} />
+      <AuthenticateStack.Screen 
+        name="EditUserPage" 
+        component={EditUserPage} 
+        options={{ title: 'Editar Usuário', headerShown: true }}
+      />
       <AuthenticateStack.Screen name="WikiFilter" component={WikiFilter} />
       <AuthenticateStack.Screen name="LogFilter" component={LogFilter} />
       <AuthenticateStack.Screen
@@ -81,6 +88,7 @@ const AppRoutes = () => {
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="RecoverPassword" component={RecoverPassword} />
       <Stack.Screen
         name="Register"
         component={Register}

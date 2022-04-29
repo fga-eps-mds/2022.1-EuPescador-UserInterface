@@ -15,6 +15,8 @@ async function UpdateFishLog(
     weight: string | undefined,
     reviewed: boolean | undefined,
     admin: Boolean,
+    superAdmin: Boolean,
+    visible: boolean
 ) {
     const userId = await AsyncStorage.getItem("@eupescador/userId");
     const token = await AsyncStorage.getItem("@eupescador/token");
@@ -22,7 +24,7 @@ async function UpdateFishLog(
     let photo = null;
     let reviewedBy = null;
 
-    if (admin)
+    if (admin || superAdmin)
         reviewedBy = userId;
 
     const coordenates = {
@@ -30,7 +32,7 @@ async function UpdateFishLog(
         longitude: longitude ? parseFloat(longitude) : null
     }
     if (photoString) {
-        photo = Buffer.from(photoString, "base64");
+        photo = photoString;
     }
     const res = await fishLogService.patch(`/fishLog/${log_id}`, {
         name,
@@ -42,8 +44,9 @@ async function UpdateFishLog(
         length: length ? parseFloat(length) : null,
         weight: weight ? parseFloat(weight) : null,
         reviewed,
-        reviewedBy,
-        updatedBy: userId,
+        reviewedBy: Number(reviewedBy),
+        updatedBy: Number(userId),
+        visible
     }, { headers: { Authorization: userToken } });
     return res.data;
 }
