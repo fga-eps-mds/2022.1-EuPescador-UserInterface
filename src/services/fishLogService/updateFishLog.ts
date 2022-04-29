@@ -32,7 +32,7 @@ async function UpdateFishLog(
         longitude: longitude ? parseFloat(longitude) : null
     }
     if (photoString) {
-        photo = Buffer.from(photoString, "base64");
+        photo = photoString;
     }
     const res = await fishLogService.patch(`/fishLog/${log_id}`, {
         name,

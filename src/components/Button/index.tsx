@@ -6,7 +6,7 @@ interface Props {
   text: string;
   type?: 'primary' | 'secondary';
   buttonFunction: VoidFunction;
-  loading: boolean;
+  loading?: boolean;
 }
 
 export function DefaultButton({

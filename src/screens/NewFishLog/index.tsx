@@ -195,7 +195,7 @@ export function NewFishLog({ navigation, route }: any) {
     let alertTitle = '';
     const { log_id } = route.params;
     let reviewed = false;
-    if (isAdmin) {
+    if (isAdmin || isSuperAdmin) {
       reviewed = true;
     }
 
@@ -565,7 +565,7 @@ export function NewFishLog({ navigation, route }: any) {
           </ImageContainer>
 
           <InputContainer>
-          {isAdmin ? (
+          {isSuperAdmin ? (
             <ImageContainer>
               <Switch
                 value={isVisible}

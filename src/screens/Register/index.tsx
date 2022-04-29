@@ -24,15 +24,12 @@ import { DefaultButton } from "../../components/Button";
 
 export function Register({ navigation }: any) {
   const [admin, setAdmin] = useState(false);
-  const [isSelectedAdmin, setIsSelectedAdmin] = useState(false);
-  const [isSelectedUser, setIsSelectedUser] = useState(true);
-  const [isSelectedSuperAdmin, setIsSelectedSuperAdmin] = useState(false);
   const [superAdmin, setSuperAdmin] = useState(false);
   const [userName, setUserName] = useState<string | undefined>();
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isEmailValidMessage, setIsEmailValidMessage] = useState("");
-  const [userPhone, setUserPhone] = useState<string | undefined>();
+  const [userPhone, setUserPhone] = useState<string | undefined>("");
   const [isPhoneValid, setIsPhoneValid] = useState(true);
   const [isPhoneValidMessage, setIsPhoneValidMessage] = useState("");
   const [userState, setUserState] = useState<string | undefined>();
@@ -97,7 +94,7 @@ export function Register({ navigation }: any) {
       userConfirmPassword
     ) {
       if (isEmailValid && isPasswordValid && isPhoneValid) {
-        const newPhone = userPhone.replaceAll(/\D/g, '');
+        const newPhone = userPhone?.replace(/\D/g, '');
         try {
           await CreateUser(
             userName,
