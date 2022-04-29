@@ -105,7 +105,6 @@ export function NewFishLog({ navigation, route }: any) {
   }
 
   const getData = async () => {
-    const id = await AsyncStorage.getItem("@eupescador/userId");
     const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
     const token = await AsyncStorage.getItem("@eupescador/token");
     if (token) {
@@ -188,7 +187,7 @@ export function NewFishLog({ navigation, route }: any) {
     }
 
     try {
-      const res = await UpdateFishLog(
+      await UpdateFishLog(
         log_id,
         fishName,
         fishLargeGroup,
@@ -326,7 +325,6 @@ export function NewFishLog({ navigation, route }: any) {
     }
     const connection = await NetInfo.fetch();
     setIsConnected(!!connection.isConnected);
-    // if ((connection.isConnected)) {
       setIsLoading(true);
       let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setIsLoading(false);
@@ -351,10 +349,6 @@ export function NewFishLog({ navigation, route }: any) {
         log_id,
         screenName: name
       })
-    // }
-    // else {
-    //   Alert.alert("Sem conexão", "Você não possui conexão atualmente e por conta disso não poderá abrir o mapa, mas não se preocupe você pode inserir as outras informações e salvar o registro como rascunho para adicionar a localização posteriormente");
-    // }
   }
 
   const saveDraft = async () => {
@@ -425,8 +419,6 @@ export function NewFishLog({ navigation, route }: any) {
     const connection = await NetInfo.fetch();
     const hasConnection = !!connection.isConnected;
     setIsConnected(hasConnection);
-    // if (hasConnection) {
-    // }
     getFishOptions();
     const { data, isNewRegister, isFishLogDraft, fishLogDraftId } = route.params;
     setIsNew(isNewRegister);
@@ -456,8 +448,6 @@ export function NewFishLog({ navigation, route }: any) {
         getData();
       }
     }
-    // if (!hasConnection)
-    //   Alert.alert("Sem conexão", "Você está conexão, logo algumas ações dentro de criação e edição serão limitadas.")
     setIsLoading(false);
   }
 
@@ -528,7 +518,6 @@ export function NewFishLog({ navigation, route }: any) {
 
   return (
     <NewFishLogContainer>
-
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) :
