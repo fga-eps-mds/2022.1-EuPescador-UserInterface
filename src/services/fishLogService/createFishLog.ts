@@ -39,6 +39,7 @@ export const createFishLog = async (
       photo,
       length: length ? parseFloat(length) : null,
       weight: weight ? parseFloat(weight) : null,
+      createdBy: Number(userId),
       visible
     },
     { headers: { Authorization: `Bearer ${token}` } },
