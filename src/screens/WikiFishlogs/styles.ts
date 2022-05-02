@@ -8,9 +8,11 @@ export const PageContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const TitleButtonsContainer = styled.View`
+export const TitleButtonsContainer = styled.ScrollView.attrs({
+  horizontal: true,
+})`
   flex-direction: row;
-`
+`;
 
 export const TitleContainer = styled.View`
   width: 100%;
