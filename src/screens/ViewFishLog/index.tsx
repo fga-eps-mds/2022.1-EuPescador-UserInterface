@@ -232,8 +232,8 @@ export const FishLog = ({ navigation, route }: any) => {
         }}
       >
            <Marker
-            coordinate={{latitude: lat !== null ? lat : 0.0,
-            longitude: lng !== null ? lng : 0.0}}
+            coordinate={{latitude: lat ? lat : 0.0,
+            longitude: lng ? lng : 0.0}}
             title='titulo'
             description='grupo'
          />
