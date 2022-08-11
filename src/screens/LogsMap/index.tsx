@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Marker } from "react-native-maps";
+import { Marker, Circle } from "react-native-maps";
 import { Map, MapContainer } from "./styles";
 import { GetAllFishLogs } from "../../services/fishLogService/getAllLogs";
 import { IFishLog } from "../../components/FishLogCard";
@@ -49,8 +49,8 @@ export const LogsMap = ({
           {fishLogs.map((res) => {
             if (res.reviewed) {
               return (
-                <Marker
-                  coordinate={{
+                <Circle
+                  center={{
                     latitude:
                       res.coordenates.latitude !== null
                         ? res.coordenates.latitude
@@ -60,8 +60,10 @@ export const LogsMap = ({
                         ? res.coordenates.longitude
                         : 0.0,
                   }}
-                  title={res.name}
-                  description={res.group}
+                  radius = { 100 }
+                  strokeWidth = { 1 }
+                  strokeColor = { '#1a66ff' }
+                  fillColor = { 'rgba(230,238,255,0.5)' }
                 />
               );
             }
