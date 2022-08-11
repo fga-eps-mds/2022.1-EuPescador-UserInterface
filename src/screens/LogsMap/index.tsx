@@ -71,3 +71,15 @@ export const LogsMap = ({
     </Container>
   );
 };
+
+function randomNumber(coordinate: number) {
+	let random = 0;
+    while(0.1> random || random > 0.25){
+     random = Math.random();
+    }
+    if(random<0.15){
+      random = random * -1;
+    }
+    let sum = coordinate + (random/80);
+    return sum;
+}
