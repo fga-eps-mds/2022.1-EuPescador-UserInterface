@@ -49,8 +49,8 @@ export const LogsMap = ({
           {fishLogs.map((res) => {
             if (res.reviewed) {
               return (
-                <Circle
-                  center={{
+                <Marker
+                  coordinate={{
                     latitude:
                       res.coordenates.latitude !== null
                         ? res.coordenates.latitude
@@ -60,10 +60,8 @@ export const LogsMap = ({
                         ? res.coordenates.longitude
                         : 0.0,
                   }}
-                  radius = { 100 }
-                  strokeWidth = { 1 }
-                  strokeColor = { '#1a66ff' }
-                  fillColor = { 'rgba(230,238,255,0.5)' }
+                  title={res.name}
+                  description={res.group}
                 />
               );
             }
