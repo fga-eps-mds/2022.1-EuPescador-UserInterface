@@ -53,11 +53,11 @@ export const LogsMap = ({
                   coordinate={{
                     latitude:
                       res.coordenates.latitude !== null
-                        ? res.coordenates.latitude
+                        ? randomNumber(res.coordenates.latitude)
                         : 0.0,
                     longitude:
                       res.coordenates.longitude !== null
-                        ? res.coordenates.longitude
+                        ? randomNumber(res.coordenates.longitude)
                         : 0.0,
                   }}
                   title={res.name}
