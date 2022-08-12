@@ -47,7 +47,6 @@ export const LogsMap = ({
           maxZoomLevel={14.8}
         >
           {fishLogs.map((res) => {
-            if (res.reviewed) {
               return (
                 <Marker
                   coordinate={{
@@ -64,7 +63,6 @@ export const LogsMap = ({
                   description={res.group}
                 />
               );
-            }
           })}
         </Map>
       </MapContainer>
