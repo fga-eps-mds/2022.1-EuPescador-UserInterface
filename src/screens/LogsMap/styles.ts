@@ -97,3 +97,15 @@ export const MapButtonsView = styled.View`
 export const ConfirmeMapLocationBUtton = styled(DefaultButton)`
 
 `
+
+export const LoadingIdicationMapView = styled.View`
+    position: absolute;
+    margin-top: ${Dimensions.get('window').height/4}px;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(52, 52, 52, 0.3);
+    width: ${Dimensions.get('window').width/2}px;
+    height: ${Dimensions.get('window').height/4}px;
+    border-radius: 35px;
+`

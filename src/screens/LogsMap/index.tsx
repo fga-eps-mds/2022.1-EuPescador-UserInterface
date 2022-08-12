@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { LoadingIdicationMapView, Map, MapContainer } from "./styles";
 import { Marker, Circle } from "react-native-maps";
-import { Map, MapContainer } from "./styles";
 import { GetAllFishLogs } from "../../services/fishLogService/getAllLogs";
 import { IFishLog } from "../../components/FishLogCard";
 import { Container } from "./styles";
 import { Imagem } from "./styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native";
 
 export const LogsMap = ({
   latitude,
@@ -19,6 +20,7 @@ export const LogsMap = ({
 }: any) => {
   const [fishLogs, setFishLogs] = useState<IFishLog[]>([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   async function updateFishLogs() {
     const data = await GetAllFishLogs(token, filterQuery);
@@ -29,6 +31,7 @@ export const LogsMap = ({
     if (userSuperAdmin === "true") {
       setIsSuperAdmin(true);
     }
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -66,6 +69,11 @@ export const LogsMap = ({
           })}
         </Map>
       </MapContainer>
+      {isLoading &&
+        <LoadingIdicationMapView>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </LoadingIdicationMapView>
+      }
     </Container>
   );
 };
