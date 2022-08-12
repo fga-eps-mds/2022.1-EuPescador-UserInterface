@@ -166,7 +166,7 @@ export function NewFishLog({ navigation, route }: any) {
     const pickerResult = await ImagePicker.launchCameraAsync({
       base64: true,
       allowsEditing: true,
-      quality: 0.5,
+      quality: 0.1,
     });
     if (pickerResult.cancelled === true) {
       return;
@@ -179,7 +179,7 @@ export function NewFishLog({ navigation, route }: any) {
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      quality: 0.5,
+      quality: 0.1,
       aspect: [1, 1],
       base64: true,
     });
