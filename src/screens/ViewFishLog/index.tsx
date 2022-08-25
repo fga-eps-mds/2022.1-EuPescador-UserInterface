@@ -137,6 +137,7 @@ export const FishLog = ({ navigation, route }: any) => {
       const file: any = await ExportFishLogs(userToken, [logId]);
       saveFile(file);
     } catch (error: any) {
+      console.log('Aqui: ');
       console.log(error);
     }
     setIsLoading(false);
