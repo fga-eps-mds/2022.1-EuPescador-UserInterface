@@ -82,6 +82,7 @@ export function NewFishLog({ navigation, route }: any) {
   const [fishFamily, setFishFamily] = useState<string | undefined>();
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const netInfo = useNetInfo();
+  const isOn = useNetInfo().isConnected;
   const getFishOptions = async () => {
     let newFishes: IFish[] = [];
     try {
@@ -171,6 +172,14 @@ export function NewFishLog({ navigation, route }: any) {
     if (pickerResult.cancelled === true) {
       return;
     }
+    if (pickerResult.height > 2200) {
+      Alert.alert("Ops!", "Imagem muito grande!", [
+        {
+          text: "Ok",
+        },
+      ]);
+      return;
+    }
     setFishPhoto(pickerResult.base64);
   }
 
@@ -180,11 +189,21 @@ export function NewFishLog({ navigation, route }: any) {
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 0.1,
+      width: 200,
+      height: 200,
       aspect: [1, 1],
       base64: true,
     });
 
     if (pickerResult.cancelled === true) {
+      return;
+    }
+    if (pickerResult.height > 2200) {
+      Alert.alert("Ops!", "Imagem muito grande!", [
+        {
+          text: "Ok",
+        },
+      ]);
       return;
     }
     setFishPhoto(pickerResult.base64);
@@ -733,14 +752,17 @@ export function NewFishLog({ navigation, route }: any) {
               </RowView>
             </BoxView>
           </InputContainer>
-          <AddLocaleButton onPress={handleOpenMap}>
-            <AddLocaleButtonIcon name="map" />
-            <AddLocaleButtonLabel>
-              {" "}
-              {fishLatitude && fishLongitude ? "Alterar" : "Adicionar"}{" "}
-              Localização{" "}
-            </AddLocaleButtonLabel>
-          </AddLocaleButton>
+          {isOn ? (
+            <AddLocaleButton onPress={handleOpenMap}>
+              <AddLocaleButtonIcon name="map" />
+              <AddLocaleButtonLabel>
+                {" "}
+                {fishLatitude && fishLongitude ? "Alterar" : "Adicionar"}{" "}
+                Localização{" "}
+              </AddLocaleButtonLabel>
+            </AddLocaleButton>
+          ) : null}
+
           <SendButtonView>{getSendButton()}</SendButtonView>
         </ScrollView>
       )}
