@@ -650,7 +650,7 @@ export function NewFishLog({ navigation, route }: any) {
               </OptionsContainer>
             ) : null}
 
-            <InputView>
+            {/* <InputView>
               <Input
                 placeholder="Espécie"
                 value={fishSpecies}
@@ -729,7 +729,7 @@ export function NewFishLog({ navigation, route }: any) {
                   {groupList()}
                 </OptionList>
               </OptionsContainer>
-            ) : null}
+            ) : null} */}
 
             <BoxView>
               <RowView>
