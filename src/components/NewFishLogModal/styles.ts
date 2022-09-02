@@ -51,14 +51,3 @@ export const ModalDescripton = styled.Text`
     font-family: ${({ theme }) => theme.fonts.regular};
     margin-bottom: ${RFValue(8, 640)}px;
 `;
-
-export const Button = styled.Button`
-  width: ${RFValue(156, 640)}px;
-  height: ${RFValue(40, 640)}px;
-  border-radius: ${RFValue(5, 640)}px;
-  background-color: red;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: ${RFValue(8, 640)}px;
-  align-self: center;
-`;

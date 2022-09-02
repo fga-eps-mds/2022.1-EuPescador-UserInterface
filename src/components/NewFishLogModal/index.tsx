@@ -5,7 +5,7 @@ import { CloseButton, CloseButtonIcon, ModalContainer, ModalDescripton, ModalIma
 import { getImage } from "../../utils/getInstructionImage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DisableIconButton } from "../DisableIconButton";
-import { DefaultButton } from "../Button";
+import { ModalButton } from "../ModalButton";
 
 interface ModalProps {
     modalVisible: boolean,
@@ -16,7 +16,6 @@ interface ModalProps {
 
 export const NewFishLogModal = ({ modalVisible, dismissModal, navigation }: ModalProps) => {
     const [modalDescriptions, setModalDescriptions] = useState([
-        "Vamos registrar um novo peixe!\n\n",
         "Você conhece o nome científico do peixe que pescou?\n\n",
     ]);
 
@@ -44,7 +43,7 @@ export const NewFishLogModal = ({ modalVisible, dismissModal, navigation }: Moda
 
     return (
         <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalVisible}
             onRequestClose={dismissModal}>
@@ -59,8 +58,8 @@ export const NewFishLogModal = ({ modalVisible, dismissModal, navigation }: Moda
                     <ModalDescripton>
                         {modalDescriptions}
                     </ModalDescripton>
-                    <DefaultButton text="Sim, conheço" buttonFunction={handleAddLog} />
-                    <DefaultButton text="Não conheço" buttonFunction={handleAddNoNameLog} />
+                    <ModalButton text="Sim, conheço" buttonFunction={handleAddLog} type='primary'/>
+                    <ModalButton text="Não conheço" buttonFunction={handleAddNoNameLog} type='secondary'/>
                 </ModalView>
             </ModalContainer>
         </Modal>
