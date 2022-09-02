@@ -8,6 +8,7 @@ import { WikiFishlogs } from '../screens/WikiFishlogs';
 import { FishLog } from '../screens/ViewFishLog';
 import theme from '../global/styles/theme';
 import { NewFishLog } from '../screens/NewFishLog';
+import { NewNoNameFishLog } from '../screens/NewNoNameFishLog';
 import { useAuth } from '../contexts/authContext';
 import { MyMap } from '../screens/Maps';
 import { WikiFish } from '../screens/WikiFish';
@@ -51,6 +52,14 @@ const AuthRoutes = () => {
       <AuthenticateStack.Screen
         name="NewFishLog"
         component={NewFishLog}
+        options={({ route }) => ({
+          title: route.params.name,
+          headerShown: true,
+        })}
+      />
+      <AuthenticateStack.Screen
+        name="NewNoNameFishLog"
+        component={NewNoNameFishLog}
         options={({ route }) => ({
           title: route.params.name,
           headerShown: true,

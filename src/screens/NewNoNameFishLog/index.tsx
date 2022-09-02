@@ -58,7 +58,7 @@ export interface IFish {
   photo: string;
 }
 
-export function NewFishLog({ navigation, route }: any) {
+export function NewNoNameFishLog({ navigation, route }: any) {
   const [isNew, setIsNew] = useState(false);
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<Boolean>(false);
@@ -607,6 +607,87 @@ export function NewFishLog({ navigation, route }: any) {
                 <TextClick>Visível no mapa?</TextClick>
               </ImageContainer>
             ) : null}
+             <TouchableOpacity
+              onPress={() => setDropLargeGroup(!dropLargeGroup)}
+            >
+              <InputView>
+                <View style={{ marginLeft: 4, width: "95%" }}>
+                  {fishLargeGroup ? (
+                    <RegularText text={fishLargeGroup ? fishLargeGroup : ""} />
+                  ) : (
+                    <HalfToneText text="Grande Grupo" />
+                  )}
+                </View>
+                <InputBox />
+              </InputView>
+            </TouchableOpacity>
+            {dropLargeGroup && data.length ? (
+              <OptionsContainer>
+                <OptionList
+                  nestedScrollEnabled={true}
+                  showsVerticalScrollIndicator
+                >
+                  {data?.map?.((item, index) => (
+                    <OptionListItem
+                      key={index}
+                      onPress={() => {
+                        setFishLargeGroup(item.groupName);
+                        setDropLargeGroup(false);
+                      }}
+                    >
+                      <RegularText text={item.groupName} />
+                    </OptionListItem>
+                  ))}
+                </OptionList>
+              </OptionsContainer>
+            ) : null}
+
+<TouchableOpacity onPress={() => setDropGroup(!dropGroup)}>
+              <InputView>
+                <View style={{ marginLeft: 4, width: "95%" }}>
+                  {fishGroup ? (
+                    <RegularText text={fishGroup ? fishGroup : ""} />
+                  ) : (
+                    <HalfToneText text="Grupo" />
+                  )}
+                </View>
+                <InputBox />
+              </InputView>
+            </TouchableOpacity>
+
+            {dropGroup &&
+            data.filter((item) => {
+              if (fishLargeGroup) {
+                if (
+                  item.groupName
+                    .toLowerCase()
+                    .includes(fishLargeGroup.toLowerCase().trim())
+                ) {
+                  return item;
+                }
+              } else {
+                return item;
+              }
+            }).length ? (
+              <OptionsContainer>
+                <OptionList
+                  nestedScrollEnabled={true}
+                  showsVerticalScrollIndicator
+                >
+                  {groupList()}
+                </OptionList>
+              </OptionsContainer>
+            ) : null}
+
+            {/* <InputView>
+              <Input
+                placeholder="Espécie"
+                value={fishSpecies}
+                onChangeText={handleFishSpeciesInput}
+              />
+              <InputBox />
+            </InputView> */}
+
             <InputView>
               <Input
                 placeholder="Nome"
@@ -649,87 +730,6 @@ export function NewFishLog({ navigation, route }: any) {
                 </OptionList>
               </OptionsContainer>
             ) : null}
-
-            {/* <InputView>
-              <Input
-                placeholder="Espécie"
-                value={fishSpecies}
-                onChangeText={handleFishSpeciesInput}
-              />
-              <InputBox />
-            </InputView>
-
-            <TouchableOpacity
-              onPress={() => setDropLargeGroup(!dropLargeGroup)}
-            >
-              <InputView>
-                <View style={{ marginLeft: 4, width: "95%" }}>
-                  {fishLargeGroup ? (
-                    <RegularText text={fishLargeGroup ? fishLargeGroup : ""} />
-                  ) : (
-                    <HalfToneText text="Grande Grupo" />
-                  )}
-                </View>
-                <InputBox />
-              </InputView>
-            </TouchableOpacity>
-            {dropLargeGroup && data.length ? (
-              <OptionsContainer>
-                <OptionList
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator
-                >
-                  {data?.map?.((item, index) => (
-                    <OptionListItem
-                      key={index}
-                      onPress={() => {
-                        setFishLargeGroup(item.groupName);
-                        setDropLargeGroup(false);
-                      }}
-                    >
-                      <RegularText text={item.groupName} />
-                    </OptionListItem>
-                  ))}
-                </OptionList>
-              </OptionsContainer>
-            ) : null}
-
-            <TouchableOpacity onPress={() => setDropGroup(!dropGroup)}>
-              <InputView>
-                <View style={{ marginLeft: 4, width: "95%" }}>
-                  {fishGroup ? (
-                    <RegularText text={fishGroup ? fishGroup : ""} />
-                  ) : (
-                    <HalfToneText text="Grupo" />
-                  )}
-                </View>
-                <InputBox />
-              </InputView>
-            </TouchableOpacity>
-
-            {dropGroup &&
-            data.filter((item) => {
-              if (fishLargeGroup) {
-                if (
-                  item.groupName
-                    .toLowerCase()
-                    .includes(fishLargeGroup.toLowerCase().trim())
-                ) {
-                  return item;
-                }
-              } else {
-                return item;
-              }
-            }).length ? (
-              <OptionsContainer>
-                <OptionList
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator
-                >
-                  {groupList()}
-                </OptionList>
-              </OptionsContainer>
-            ) : null} */}
 
             <BoxView>
               <RowView>
