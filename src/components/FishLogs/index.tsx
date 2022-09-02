@@ -35,6 +35,7 @@ import { FishLogCard, IFishLog } from "../FishLogCard";
 import { DraftButton } from "../DraftButton";
 import { FilterButton } from "../FilterButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NewFishLogModal } from "../NewFishLogModal";
 
 interface Props {
   token: string;
@@ -55,6 +56,7 @@ export const FishLogs = ({
   const [isCheck, setIsCheck] = useState(false);
   const [isExportMode, setIsExportMode] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
+  const [showModalRegister, setShowModalRegister] = useState(false);
 
   const { StorageAccessFramework } = FileSystem;
 
@@ -251,136 +253,142 @@ export const FishLogs = ({
   }, []);
 
   return (
-    <Container>
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <>
-          <OptionsView>
-            <FilterButton
-              url={filterQuery}
-              navigation={navigation}
-              screen="LogFilter"
-            />
-            {isAdmin ? (
-              <ButtonView>
-                <ExportButton onPress={handleExport}>
-                  {isExportMode ? (
-                    <>
-                      <DownloadIcon name="cancel" />
-                      <CancelButtonText>Cancelar</CancelButtonText>
-                    </>
-                  ) : (
-                    <>
-                      <DownloadIcon name="file-download" />
-                      <ExportButtonText>Exportar Registros</ExportButtonText>
-                    </>
-                  )}
-                </ExportButton>
-              </ButtonView>
-            ) : (
-              <ButtonView>
-                <ExportButton onPress={handleAddLog}>
-                  <DownloadIcon name="add" />
-                  <ExportButtonText>Criar Novo Registro</ExportButtonText>
-                </ExportButton>
-              </ButtonView>
-            )}
-          </OptionsView>
-          <ExportAllView>
-            {isExportMode ? (
-              <>
-                {/* <CheckBox value={isCheck} onValueChange={selectAllFunction} /> */}
-                <CheckBox
-                  checked={isCheck}
-                  onPress={() => selectAllFunction(!isCheck)}
-                  checkedColor={"#00BBD4"}
-                  uncheckedColor={"black"}
-                />
-                <ExportAllText>Selecionar todos os registros</ExportAllText>
-              </>
-            ) : null}
-          </ExportAllView>
-          {hasDraft ? <DraftButton /> : null}
-
-          {fishLog.length ? (
-            <FishCardList
-              data={fishLog}
-              renderItem={({ item }) => (
-                <FishLogCard
-                  selectAll={isCheck}
-                  fishLog={item}
-                  isHidden={!isExportMode}
-                  cardFunction={async () => {
-                    await NetInfo.fetch().then((status) => {
-                      if (status.isConnected) {
-                        handleNavigationOnline(item.id);
-                      } else {
-                        handleNavigationOffline(item);
-                      }
-                    });
-                  }}
-                  selectFunction={() => {
-                    addExportList(item.id);
-                  }}
-                  deselectFunction={() => {
-                    removeExportList(item.id);
-                  }}
-                />
+    <>
+      <NewFishLogModal 
+        modalVisible={showModalRegister}
+        dismissModal={() => setShowModalRegister(false)}
+        navigation={navigation} />
+      <Container>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <>
+            <OptionsView>
+              <FilterButton
+                url={filterQuery}
+                navigation={navigation}
+                screen="LogFilter"
+              />
+              {isAdmin ? (
+                <ButtonView>
+                  <ExportButton onPress={handleExport}>
+                    {isExportMode ? (
+                      <>
+                        <DownloadIcon name="cancel" />
+                        <CancelButtonText>Cancelar</CancelButtonText>
+                      </>
+                    ) : (
+                      <>
+                        <DownloadIcon name="file-download" />
+                        <ExportButtonText>Exportar Registros</ExportButtonText>
+                      </>
+                    )}
+                  </ExportButton>
+                </ButtonView>
+              ) : (
+                <ButtonView>
+                  <ExportButton onPress={() => {setShowModalRegister(true)}}>
+                    <DownloadIcon name="add" />
+                    <ExportButtonText>Criar Novo Registro</ExportButtonText>
+                  </ExportButton>
+                </ButtonView>
               )}
-              keyExtractor={(item) => item.id}
-            />
-          ) : filterQuery ? (
-            <NoResultContainer>
-              <SearchImage source={require("../../assets/search.png")} />
-              <BoldText>
-                Não encontramos nada com os filtros utilizados
-              </BoldText>
-              <RegularText>
-                Por favor, verifique sua pesquisa e tente novamente para obter
-                resultados.
-              </RegularText>
-            </NoResultContainer>
-          ) : null}
+            </OptionsView>
+            <ExportAllView>
+              {isExportMode ? (
+                <>
+                  {/* <CheckBox value={isCheck} onValueChange={selectAllFunction} /> */}
+                  <CheckBox
+                    checked={isCheck}
+                    onPress={() => selectAllFunction(!isCheck)}
+                    checkedColor={"#00BBD4"}
+                    uncheckedColor={"black"}
+                  />
+                  <ExportAllText>Selecionar todos os registros</ExportAllText>
+                </>
+              ) : null}
+            </ExportAllView>
+            {hasDraft ? <DraftButton /> : null}
 
-          {isExportMode ? (
-            <ExportSelectedView>
-              <ExportSelectedButton
-                disabled={!exportList.length}
-                onPress={() => {
-                  Alert.alert(
-                    "Exportar Registros",
-                    "Você deseja exportar esses registros?",
-                    [
-                      {
-                        text: "Cancelar",
-                        style: "cancel",
-                      },
-                      {
-                        text: "Ok",
-                        onPress: () => handleExportSelected(),
-                      },
-                    ]
-                  );
-                }}
-              >
-                <ExportSelectedButtonView>
-                  <ExportSelectedText>Exportar Selecionados</ExportSelectedText>
-                  <DownloadIconBottom name="file-download" />
-                </ExportSelectedButtonView>
-              </ExportSelectedButton>
-            </ExportSelectedView>
-          ) : (
-            <AddButtonView>
-              <AddLogButton onPress={handleAddLog}>
-                <AddLogView>
-                  <AddIcon name="add" />
-                </AddLogView>
-              </AddLogButton>
-            </AddButtonView>
-          )}
-        </>
-      )}
-    </Container>
+            {fishLog.length ? (
+              <FishCardList
+                data={fishLog}
+                renderItem={({ item }) => (
+                  <FishLogCard
+                    selectAll={isCheck}
+                    fishLog={item}
+                    isHidden={!isExportMode}
+                    cardFunction={async () => {
+                      await NetInfo.fetch().then((status) => {
+                        if (status.isConnected) {
+                          handleNavigationOnline(item.id);
+                        } else {
+                          handleNavigationOffline(item);
+                        }
+                      });
+                    }}
+                    selectFunction={() => {
+                      addExportList(item.id);
+                    }}
+                    deselectFunction={() => {
+                      removeExportList(item.id);
+                    }}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+              />
+            ) : filterQuery ? (
+              <NoResultContainer>
+                <SearchImage source={require("../../assets/search.png")} />
+                <BoldText>
+                  Não encontramos nada com os filtros utilizados
+                </BoldText>
+                <RegularText>
+                  Por favor, verifique sua pesquisa e tente novamente para obter
+                  resultados.
+                </RegularText>
+              </NoResultContainer>
+            ) : null}
+
+            {isExportMode ? (
+              <ExportSelectedView>
+                <ExportSelectedButton
+                  disabled={!exportList.length}
+                  onPress={() => {
+                    Alert.alert(
+                      "Exportar Registros",
+                      "Você deseja exportar esses registros?",
+                      [
+                        {
+                          text: "Cancelar",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Ok",
+                          onPress: () => handleExportSelected(),
+                        },
+                      ]
+                    );
+                  }}
+                >
+                  <ExportSelectedButtonView>
+                    <ExportSelectedText>Exportar Selecionados</ExportSelectedText>
+                    <DownloadIconBottom name="file-download" />
+                  </ExportSelectedButtonView>
+                </ExportSelectedButton>
+              </ExportSelectedView>
+            ) : (
+              <AddButtonView>
+                <AddLogButton onPress={handleAddLog}>
+                  <AddLogView>
+                    <AddIcon name="add" />
+                  </AddLogView>
+                </AddLogButton>
+              </AddButtonView>
+            )}
+          </>
+        )}
+      </Container>
+    </>
   );
 };
