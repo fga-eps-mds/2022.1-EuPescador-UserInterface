@@ -21,7 +21,8 @@ export const MapContainer = styled.View`
     background-color: white;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    right: ${RFValue(8, 640)}px;
+    width: ${Dimensions.get('window').width}px;
     height:40%;
 `
 

@@ -27,12 +27,14 @@ export const MapInfoView = styled.View`
 export const MapInstructions = styled.View`
     width: ${RFValue(300, 640)}px;
     height: ${RFValue(60, 640)}px;
+    position: absolute;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    margin-top: ${RFValue(40, 640)}px;
+    top: ${RFValue(60, 640)}px;
     align-self: center;
     justify-content: center;
     background-color: ${({ theme }) => theme.colors.background};
     border-radius: ${RFValue(8, 640)}px;
+    padding: 4px;
 `
 
 export const MapInstructionsText = styled.Text`
@@ -44,6 +46,9 @@ export const MapInstructionsText = styled.Text`
 
 export const LocationUsageInfoView = styled.View`
     flex: 1;
+    position: absolute;
+    bottom: ${RFValue(16, 640)}px;
+    padding: 8px;
     align-items: center;
     justify-content: flex-end;
     align-self: center;
