@@ -85,7 +85,6 @@ export const FishLogs = ({
 
     try {
       let data = await GetAllFishLogs(token, filterQuery);
-      console.log(data, 'data')
       const offlineRegisterArray = await storage.getString(
         "@eupescador/newfish"
       );
@@ -102,7 +101,7 @@ export const FishLogs = ({
         "@eupescador/allFishesLogs",
         JSON.stringify(data)
       );
-      setFishLog(data);
+      setFishLog(data?.reverse());
     } catch (error: any) {
       console.log(error, 'erro');
     }
@@ -245,7 +244,7 @@ export const FishLogs = ({
 
       if (con.isConnected) {
         console.log('caiu conectado')
-        getFishLogs();
+        getFishLogs().catch((error)=>{console.log(error)})
         getDrafts();
       } else {
         setIsLoading(false);
@@ -384,7 +383,7 @@ export const FishLogs = ({
               </ExportSelectedView>
             ) : (
               <AddButtonView>
-                <AddLogButton onPress={handleAddLog}>
+                <AddLogButton onPress={() => {setShowModalRegister(true)}}>
                   <AddLogView>
                     <AddIcon name="add" />
                   </AddLogView>

@@ -173,14 +173,14 @@ export function NewFishLog({ navigation, route }: any) {
     if (pickerResult.cancelled === true) {
       return;
     }
-    if (pickerResult.height > 2200) {
+    /*   if (pickerResult.height > 2200) {
       Alert.alert("Ops!", "Imagem muito grande!", [
         {
           text: "Ok",
         },
       ]);
       return;
-    }
+    } */
     setFishPhoto(pickerResult.base64);
   }
 
@@ -199,14 +199,14 @@ export function NewFishLog({ navigation, route }: any) {
     if (pickerResult.cancelled === true) {
       return;
     }
-    if (pickerResult.height > 2200) {
+    /*    if (pickerResult.height > 2200) {
       Alert.alert("Ops!", "Imagem muito grande!", [
         {
           text: "Ok",
         },
       ]);
       return;
-    }
+    } */
     setFishPhoto(pickerResult.base64);
   }
 
@@ -311,16 +311,10 @@ export function NewFishLog({ navigation, route }: any) {
         if (response) {
           listFish = JSON.parse(response);
           listFish.push(fish);
-          await storage.set(
-            "@eupescador/newfish",
-            JSON.stringify(listFish)
-          );
+          await storage.set("@eupescador/newfish", JSON.stringify(listFish));
         } else {
           listFish.push(fish);
-          await storage.set(
-            "@eupescador/newfish",
-            JSON.stringify(listFish)
-          );
+          await storage.set("@eupescador/newfish", JSON.stringify(listFish));
         }
 
         Alert.alert("Registro", "Seu registro foi salvo com sucesso!");
