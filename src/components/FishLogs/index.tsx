@@ -36,6 +36,7 @@ import { DraftButton } from "../DraftButton";
 import { FilterButton } from "../FilterButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NewFishLogModal } from "../NewFishLogModal";
+import { storage } from "../../../App";
 
 interface Props {
   token: string;
@@ -61,11 +62,11 @@ export const FishLogs = ({
   const { StorageAccessFramework } = FileSystem;
 
   const loadFishesLogsOffline = async () => {
-    let allFishesLogs = await AsyncStorage.getItem("@eupescador/allFishesLogs");
+    let allFishesLogs = await storage.getString("@eupescador/allFishesLogs");
     if (allFishesLogs) {
       let fishesLogs = JSON.parse(allFishesLogs);
 
-      const newFishesLogs = await AsyncStorage.getItem("@eupescador/newfish");
+      const newFishesLogs = await storage.getString("@eupescador/newfish");
 
       if (newFishesLogs) {
         let fishesUnSave = [];
@@ -84,9 +85,10 @@ export const FishLogs = ({
 
     try {
       let data = await GetAllFishLogs(token, filterQuery);
-      const offlineRegisterArray = await AsyncStorage.getItem(
+      const offlineRegisterArray = await storage.getString(
         "@eupescador/newfish"
       );
+      console.log(offlineRegisterArray, 'oi')
       let fishesInCache = [];
       if (offlineRegisterArray) {
         fishesInCache = JSON.parse(offlineRegisterArray);
@@ -95,20 +97,20 @@ export const FishLogs = ({
           data.push(fishesInCache[i]);
         }
       }
-      await AsyncStorage.setItem(
+      await storage.set(
         "@eupescador/allFishesLogs",
         JSON.stringify(data)
       );
-      setFishLog(data.reverse());
+      setFishLog(data?.reverse());
     } catch (error: any) {
-      console.log(error);
+      console.log(error, 'erro');
     }
     setIsLoading(false);
   };
 
   const getDrafts = async () => {
     setIsLoading(true);
-    const drafts = await AsyncStorage.getItem("drafts");
+    const drafts = await storage.getString("drafts");
     if (drafts) setHasDraft(drafts != "[]");
   };
 
@@ -241,7 +243,8 @@ export const FishLogs = ({
       const con = await NetInfo.fetch();
 
       if (con.isConnected) {
-        getFishLogs();
+        console.log('caiu conectado')
+        getFishLogs().catch((error)=>{console.log(error)})
         getDrafts();
       } else {
         setIsLoading(false);
@@ -313,8 +316,9 @@ export const FishLogs = ({
             {fishLog.length ? (
               <FishCardList
                 data={fishLog}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <FishLogCard
+                    key={index}
                     selectAll={isCheck}
                     fishLog={item}
                     isHidden={!isExportMode}
@@ -335,7 +339,7 @@ export const FishLogs = ({
                     }}
                   />
                 )}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => index}
               />
             ) : filterQuery ? (
               <NoResultContainer>
@@ -379,7 +383,7 @@ export const FishLogs = ({
               </ExportSelectedView>
             ) : (
               <AddButtonView>
-                <AddLogButton onPress={handleAddLog}>
+                <AddLogButton onPress={() => {setShowModalRegister(true)}}>
                   <AddLogView>
                     <AddIcon name="add" />
                   </AddLogView>

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Buffer } from "buffer";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
@@ -14,6 +21,7 @@ import { createFishLog } from "../../services/fishLogService/createFishLog";
 import { GetOneFishLog } from "../../services/fishLogService/getOneFishLog";
 import { UpdateFishLog } from "../../services/fishLogService/updateFishLog";
 import { data } from "../../utils/dataFishes";
+const { width } = Dimensions.get("window");
 import {
   NewFishLogContainer,
   ImageContainer,
@@ -38,6 +46,9 @@ import {
   AddLocaleButtonIcon,
   NewFishlogScroll,
 } from "./styles";
+import { storage } from "../../../App";
+import SelectDropdown from "react-native-select-dropdown";
+import { setgroups } from "process";
 
 export interface IFish {
   _id: string;
@@ -107,11 +118,11 @@ export function NewNoNameFishLog({ navigation, route }: any) {
   };
 
   const getData = async () => {
-    const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
-    const userSuperAdmin = await AsyncStorage.getItem(
+    const userAdmin = await storage.getString("@eupescador/userAdmin");
+    const userSuperAdmin = await storage.getString(
       "@eupescador/userSuperAdmin"
     );
-    const token = await AsyncStorage.getItem("@eupescador/token");
+    const token = await storage.getString("@eupescador/token");
     if (token) {
       getFishLogProperties(token);
     }
@@ -257,11 +268,11 @@ export function NewNoNameFishLog({ navigation, route }: any) {
 
   const deleteDraft = async () => {
     if (isDraft) {
-      const drafts = await AsyncStorage.getItem("drafts");
+      const drafts = await storage.getString("drafts");
       if (drafts) {
         let draftList: [] = JSON.parse(drafts);
         if (draftId) draftList.splice(parseInt(draftId), 1);
-        await AsyncStorage.setItem("drafts", JSON.stringify(draftList));
+        await storage.set("drafts", JSON.stringify(draftList));
       }
     }
   };
@@ -287,7 +298,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
         alertMessage = "Registro criado com sucesso!";
         await deleteDraft();
       } else {
-        const userId = await AsyncStorage.getItem("@eupescador/userId");
+        const userId = await storage.getString("@eupescador/userId");
         const coordenates = {
           latitude: parseFloat(fishLatitude!),
           longitude: parseFloat(fishLongitude!),
@@ -304,22 +315,16 @@ export function NewNoNameFishLog({ navigation, route }: any) {
           coordenates,
         };
 
-        const response = await AsyncStorage.getItem("@eupescador/newfish");
+        const response = await storage.getString("@eupescador/newfish");
 
         let listFish = [];
         if (response) {
           listFish = JSON.parse(response);
           listFish.push(fish);
-          await AsyncStorage.setItem(
-            "@eupescador/newfish",
-            JSON.stringify(listFish)
-          );
+          await storage.set("@eupescador/newfish", JSON.stringify(listFish));
         } else {
           listFish.push(fish);
-          await AsyncStorage.setItem(
-            "@eupescador/newfish",
-            JSON.stringify(listFish)
-          );
+          await storage.set("@eupescador/newfish", JSON.stringify(listFish));
         }
 
         Alert.alert("Registro", "Seu registro foi salvo com sucesso!");
@@ -396,7 +401,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
 
   const saveDraft = async () => {
     setIsLoading(true);
-    let drafts = await AsyncStorage.getItem("drafts");
+    let drafts = await storage.getString("drafts");
     const newDraft = {
       photoString: fishPhoto,
       name: fishName,
@@ -423,7 +428,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
     } else {
       newDrafts = [newDraft];
     }
-    await AsyncStorage.setItem("drafts", JSON.stringify(newDrafts));
+    await storage.set("drafts", JSON.stringify(newDrafts));
     setIsLoading(false);
     const resetAction = CommonActions.reset({
       index: 0,
@@ -557,17 +562,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
     let fishesGroup = filteredGroupFishes.map((item) => item.subGroups);
     fishesGroup = [...new Set(fishesGroup)];
     return fishesGroup[0].map((item, index) => {
-      return (
-        <OptionListItem
-          key={index}
-          onPress={() => {
-            setFishGroup(item);
-            setDropGroup(false);
-          }}
-        >
-          <RegularText text={item} />
-        </OptionListItem>
-      );
+      return item;
     });
   };
 
@@ -607,53 +602,33 @@ export function NewNoNameFishLog({ navigation, route }: any) {
                 <TextClick>Visível no mapa?</TextClick>
               </ImageContainer>
             ) : null}
-             <TouchableOpacity
-              onPress={() => setDropLargeGroup(!dropLargeGroup)}
-            >
-              <InputView>
-                <View style={{ marginLeft: 4, width: "95%" }}>
-                  {fishLargeGroup ? (
-                    <RegularText text={fishLargeGroup ? fishLargeGroup : ""} />
-                  ) : (
-                    <HalfToneText text="Grande Grupo" />
-                  )}
-                </View>
-                <InputBox />
-              </InputView>
-            </TouchableOpacity>
-            {dropLargeGroup && data.length ? (
-              <OptionsContainer>
-                <OptionList
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator
-                >
-                  {data?.map?.((item, index) => (
-                    <OptionListItem
-                      key={index}
-                      onPress={() => {
-                        setFishLargeGroup(item.groupName);
-                        setDropLargeGroup(false);
-                      }}
-                    >
-                      <RegularText text={item.groupName} />
-                    </OptionListItem>
-                  ))}
-                </OptionList>
-              </OptionsContainer>
-            ) : null}
-
-<TouchableOpacity onPress={() => setDropGroup(!dropGroup)}>
-              <InputView>
-                <View style={{ marginLeft: 4, width: "95%" }}>
-                  {fishGroup ? (
-                    <RegularText text={fishGroup ? fishGroup : ""} />
-                  ) : (
-                    <HalfToneText text="Grupo" />
-                  )}
-                </View>
-                <InputBox />
-              </InputView>
-            </TouchableOpacity>
+            <SelectDropdown
+              defaultButtonText={"Grande Grupo"}
+              data={[
+                "Arraias",
+                "Cascudos",
+                "Peixes de couro",
+                "Peixes com escamas",
+                "Outros",
+              ]}
+              buttonStyle={styles.dropdown1BtnStyle}
+              buttonTextStyle={styles.dropdown1BtnTxtStyle}
+              dropdownIconPosition={"right"}
+              dropdownStyle={styles.dropdown1DropdownStyle}
+              rowStyle={styles.dropdown1RowStyle}
+              rowTextStyle={styles.dropdown1RowTxtStyle}
+              onSelect={(item) => {
+                setFishLargeGroup(item);
+                setDropLargeGroup(false);
+                setDropGroup(true);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
+              }}
+            />
 
             {dropGroup &&
             data.filter((item) => {
@@ -669,24 +644,25 @@ export function NewNoNameFishLog({ navigation, route }: any) {
                 return item;
               }
             }).length ? (
-              <OptionsContainer>
-                <OptionList
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator
-                >
-                  {groupList()}
-                </OptionList>
-              </OptionsContainer>
-            ) : null}
-
-            {/* <InputView>
-              <Input
-                placeholder="Espécie"
-                value={fishSpecies}
-                onChangeText={handleFishSpeciesInput}
+              <SelectDropdown
+                data={groupList()}
+                defaultButtonText={"Subgrupo"}
+                buttonStyle={styles.dropdown2BtnStyle}
+                buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                dropdownStyle={styles.dropdown2DropdownStyle}
+                rowStyle={styles.dropdown2RowStyle}
+                rowTextStyle={styles.dropdown2RowTxtStyle}
+                onSelect={(item) => {
+                  setFishGroup(item);
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
+                }}
               />
-              <InputBox />
-            </InputView> */}
+            ) : null}
 
             <InputView>
               <Input
@@ -769,3 +745,64 @@ export function NewNoNameFishLog({ navigation, route }: any) {
     </NewFishLogContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  header: {
+    flexDirection: "row",
+    width,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F6F6F6",
+  },
+  headerTitle: { color: "#000", fontWeight: "bold", fontSize: 16 },
+  saveAreaViewContainer: { flex: 1, backgroundColor: "#FFF" },
+  viewContainer: { flex: 1, width, backgroundColor: "#FFF" },
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: "10%",
+    paddingBottom: "20%",
+  },
+
+  dropdown1BtnStyle: {
+    width: "65%",
+    height: 45,
+    backgroundColor: "#FFF",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#444",
+  },
+  dropdown1BtnTxtStyle: { color: "#444", textAlign: "left", fontSize: 16 },
+  dropdown1DropdownStyle: { backgroundColor: "#EFEFEF" },
+  dropdown1RowStyle: {
+    backgroundColor: "#EFEFEF",
+    borderBottomColor: "#C5C5C5",
+  },
+  dropdown1RowTxtStyle: { color: "#444", textAlign: "left" },
+
+  dropdown2BtnStyle: {
+    width: "65%",
+    height: 45,
+    backgroundColor: "#FFF",
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 10,
+    borderColor: "#444",
+  },
+  dropdown2BtnTxtStyle:  { color: "#444", textAlign: "left", fontSize: 16 },
+  dropdown2DropdownStyle:{ backgroundColor: "#EFEFEF" },
+  dropdown2RowStyle:{ color: "#444", textAlign: "left" },
+  dropdown2RowTxtStyle:  {
+    backgroundColor: "#EFEFEF",
+    borderBottomColor: "#C5C5C5",
+  },
+});

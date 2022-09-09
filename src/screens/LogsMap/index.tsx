@@ -7,6 +7,7 @@ import { Container } from "./styles";
 import { Imagem } from "./styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator } from "react-native";
+import { storage } from "../../../App";
 
 export const LogsMap = ({
   latitude,
@@ -25,7 +26,7 @@ export const LogsMap = ({
   async function updateFishLogs() {
     const data = await GetAllFishLogs(token, filterQuery);
     setFishLogs(data as IFishLog[]);
-    const userSuperAdmin = await AsyncStorage.getItem(
+    const userSuperAdmin = await storage.getString(
       "@eupescador/userSuperAdmin"
     );
     if (userSuperAdmin === "true") {
@@ -42,50 +43,50 @@ export const LogsMap = ({
       <MapContainer>
         <Map
           initialRegion={{
-            latitude: latitude,
-            longitude: longitude,
-            latitudeDelta: latitudeDelta,
-            longitudeDelta: longitudeDelta,
+            latitude: -15.7801,
+            longitude: -47.9292,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
           maxZoomLevel={14.8}
         >
           {fishLogs.map((res) => {
-              return (
-                <Marker
-                  coordinate={{
-                    latitude:
-                      res.coordenates.latitude !== null
-                        ? randomNumber(res.coordenates.latitude)
-                        : 0.0,
-                    longitude:
-                      res.coordenates.longitude !== null
-                        ? randomNumber(res.coordenates.longitude)
-                        : 0.0,
-                  }}
-                  title={res.name}
-                  description={res.group}
-                />
-              );
+            return (
+              <Marker
+                coordinate={{
+                  latitude:
+                    res.coordenates.latitude !== null
+                      ? randomNumber(res.coordenates.latitude)
+                      : 0.0,
+                  longitude:
+                    res.coordenates.longitude !== null
+                      ? randomNumber(res.coordenates.longitude)
+                      : 0.0,
+                }}
+                title={res.name}
+                description={res.group}
+              />
+            );
           })}
         </Map>
       </MapContainer>
-      {isLoading &&
+      {isLoading && (
         <LoadingIdicationMapView>
           <ActivityIndicator size="large" color="#0000ff" />
         </LoadingIdicationMapView>
-      }
+      )}
     </Container>
   );
 };
 
 function randomNumber(coordinate: number) {
-	let random = 0;
-    while(0.1> random || random > 0.25){
-     random = Math.random();
-    }
-    if(random<0.15){
-      random = random * -1;
-    }
-    let sum = coordinate + (random/80);
-    return sum;
+  let random = 0;
+  while (0.1 > random || random > 0.25) {
+    random = Math.random();
+  }
+  if (random < 0.15) {
+    random = random * -1;
+  }
+  let sum = coordinate + random / 80;
+  return sum;
 }

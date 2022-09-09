@@ -7,11 +7,12 @@ import {
     DraftButtonLabel,
     DraftButtonTouchable
 } from "./styles";
+import { storage } from "../../../App";
 export const DraftButton = () => {
     const [drafts, setDrafts] = useState([]);
     const navigation = useNavigation();
     const getDrafts = async () => {
-        const draftsData = await AsyncStorage.getItem('drafts');
+        const draftsData = await storage.getString('drafts');
         if (draftsData)
             setDrafts(JSON.parse(draftsData));
 

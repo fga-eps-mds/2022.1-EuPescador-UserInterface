@@ -6,6 +6,7 @@ import { getImage } from "../../utils/getInstructionImage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DisableIconButton } from "../DisableIconButton";
 import { DefaultButton } from "../Button";
+import { storage } from "../../../App";
 interface ModalProps {
     modalVisible: boolean,
     dismissModal: () => void,
@@ -23,7 +24,7 @@ export const InstructionModal = ({ modalVisible, dismissModal }: ModalProps) => 
     }
 
     const addLastDescription = async () => {
-        const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
+        const userAdmin = await storage.getString("@eupescador/userAdmin");
         if (userAdmin === "true") {
             setModalDescriptions(modalDescriptions => [...modalDescriptions, "Como pesquisador, você pode revisar os detalhes de um registro criado por qualquer usuário."]);
         }
