@@ -114,7 +114,7 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
       <PageContainer>
         <TopBar
           //Adicionar parada do mapa
-          title={wiki ? 'Biblioteca' : fishlogTab ? 'Registros' : mapTab ? 'Mapa' : 'Usuários'}
+          title={wiki ? 'Biblioteca' : fishlogTab ? 'Registros' : mapTab ? 'Mapa' : ''}
           icon={isLogged ? 'logout' : 'login'}
           iconText={isLogged ? 'Sair' : 'Entrar'}
           buttonFunction={
@@ -161,19 +161,6 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
                 {(!wiki && !fishlogTab && mapTab)  ? <TitleHighlight /> : null}
               
               </TouchableTitle>
-              {isSuperAdmin ? (
-              <TouchableTitle
-                onPress={() => {
-                  setWiki(false);
-                  setFishLogTab(false);
-                  setMapTab(false);
-                }}
-              >
-                <TitleText wiki={!wiki} fishLogTab={!fishlogTab} mapTab={!mapTab}>Usuários</TitleText>
-                {(!wiki && !fishlogTab && !mapTab)  ? <TitleHighlight /> : null}
-              </TouchableTitle>) : null}
-
-
             </TitleButtonsContainer>
             <InstructionButton onPress={() => { setShowModal(true) }}>
               <InstructionButtonIcon name="info" />
