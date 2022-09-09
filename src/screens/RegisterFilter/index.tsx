@@ -18,6 +18,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { GetAllFishLogs } from "../../services/fishLogService/getAllLogs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator } from "react-native";
+import { storage } from "../../../App";
 
 
 interface IGroup {
@@ -198,8 +199,8 @@ export const LogFilter = ({ navigation }: any) => {
     }
 
     const getData = async () => {
-        const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
-        const token = await AsyncStorage.getItem("@eupescador/token");
+        const userAdmin = await storage.getString("@eupescador/userAdmin");
+        const token = await storage.getString("@eupescador/token");
         if (token) {
             setFamilies(token);
         }

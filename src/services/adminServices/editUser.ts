@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storage } from "../../../App";
 import { adminService } from "./adminService";
 const config = require('../../../config');
 
@@ -9,7 +10,7 @@ async function editUser(
     state: string | undefined,
     city: string | undefined,
   ) {
-        const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
+        const userSuperAdmin = await storage.getString('@eupescador/userSuperAdmin');
 
         if(userSuperAdmin === "true") {
           const token : string = config.ADMIN_CONFIRMATION_CODE;

@@ -4,11 +4,12 @@ import { IFishLog } from "../../components/FishLogCard";
 import { WikiFishList } from "../../components/WikiFishList";
 import { DraftsContainer } from "./styles";
 import { ActivityIndicator, Alert } from 'react-native';
+import { storage } from "../../../App";
 
 export const Drafts = ({ navigation, route }: any) => {
     const [draftList, setDraftList] = useState<IFishLog[]>([]);
     const getDrafts = async () => {
-        const draftsData = await AsyncStorage.getItem('drafts');
+        const draftsData = await storage.getString('drafts');
         if (draftsData && draftsData != '[]')
             setDraftList(JSON.parse(draftsData) as IFishLog[]);
         setIsLoading(false);

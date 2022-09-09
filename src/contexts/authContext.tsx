@@ -5,6 +5,7 @@ import { UserLogin } from '../services/userServices/login';
 import { UserEmail } from '../services/userServices/userEmail';
 import { createFishLog } from '../services/fishLogService/createFishLog';
 import NetInfo from '@react-native-community/netinfo';
+import { storage } from '../../App';
 
 interface IAuthProvider {
   children: React.ReactNode;
@@ -26,10 +27,10 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   const con = NetInfo.useNetInfo();
 
   async function getValues() {
-    const token = await AsyncStorage.getItem('@eupescador/token');
-    const _userId = await AsyncStorage.getItem('@eupescador/userId');
-    const userAdmin = await AsyncStorage.getItem('@eupescador/userAdmin');
-    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
+    const token = await storage.getString('@eupescador/token');
+    const _userId = await storage.getString('@eupescador/userId');
+    const userAdmin = await storage.getString('@eupescador/userAdmin');
+    const userSuperAdmin = await storage.getString('@eupescador/userSuperAdmin');
 
     return { token, _userId, userAdmin, userSuperAdmin };
   }
@@ -50,26 +51,26 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   async function signIn(email: string, password: string) {
     try {
       const result = await UserLogin(email, password);
-
-      await AsyncStorage.setItem('@eupescador/token', result.data.token);
-      await AsyncStorage.setItem('@eupescador/userId', JSON.stringify(result.data.id));
-      await AsyncStorage.setItem(
+      await storage.set('@eupescador/token', result.data.token);
+      await storage.set('@eupescador/userId', JSON.stringify(result.data.id));
+      await storage.set(
         '@eupescador/userAdmin',
         JSON.stringify(result.data.admin),
       );
-      await AsyncStorage.setItem(
+      await storage.set(
         '@eupescador/userSuperAdmin',
         JSON.stringify(result.data.superAdmin),
       );
-      const hasAcessTheApp = await AsyncStorage.getItem('hasAcessTheApp');
+      const hasAcessTheApp = await storage.getString('hasAcessTheApp');
       if (!!hasAcessTheApp == false) {
-        await AsyncStorage.setItem('hasAcessTheApp', 'false');
+        await storage.set('hasAcessTheApp', 'false');
       }
       userService.defaults.headers.Authorization = `Bearer ${result.data.token}`;
       setAuthenticated(true);
       setUserId(result.data.id);
       return result;
     } catch (error) {
+      console.log(error)
       return error;
     }
   }
@@ -77,18 +78,18 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
   async function signOut() {
     setAuthenticated(false);
     setUserId('');
-    await AsyncStorage.removeItem('@eupescador/token');
-    await AsyncStorage.removeItem('@eupescador/userId');
-    await AsyncStorage.removeItem('@eupescador/userAdmin');
-    await AsyncStorage.removeItem('@eupescador/userSuperAdmin');
-    await AsyncStorage.removeItem('drafts');
+    await storage.delete('@eupescador/token');
+    await storage.delete('@eupescador/userId');
+    await storage.delete('@eupescador/userAdmin');
+    await storage.delete('@eupescador/userSuperAdmin');
+    await storage.delete('drafts');
     userService.defaults.headers.Authorization = undefined;
   }
 
   useEffect(() => {
     async function getFishCache() {
       let conection = await NetInfo.fetch();
-      const response = await AsyncStorage.getItem('@eupescador/newfish');
+      const response = await storage.getString('@eupescador/newfish');
       if (response) {
         let fish = [];
         fish = JSON.parse(response);
@@ -108,7 +109,7 @@ export const AuthProvider: React.FC<IAuthProvider> = ({ children }) => {
               fish[i].visible
             );
           }
-          await AsyncStorage.removeItem('@eupescador/newfish');
+          await storage.delete('@eupescador/newfish');
         };
       }
     };

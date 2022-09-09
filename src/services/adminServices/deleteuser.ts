@@ -1,12 +1,13 @@
 import { adminService } from "./adminService";
 const config = require('../../../config');
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from "../../../App";
 
 async function deleteUser(
   id: string,
 ) {
     try {
-        const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
+        const userSuperAdmin = await storage.getString('@eupescador/userSuperAdmin');
 
         if(userSuperAdmin === "true") {
           const token : string = config.ADMIN_CONFIRMATION_CODE;

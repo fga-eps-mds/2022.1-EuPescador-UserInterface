@@ -25,7 +25,7 @@ export const LogsMap = ({
   async function updateFishLogs() {
     const data = await GetAllFishLogs(token, filterQuery);
     setFishLogs(data as IFishLog[]);
-    const userSuperAdmin = await AsyncStorage.getItem(
+    const userSuperAdmin = await storage.getString(
       "@eupescador/userSuperAdmin"
     );
     if (userSuperAdmin === "true") {

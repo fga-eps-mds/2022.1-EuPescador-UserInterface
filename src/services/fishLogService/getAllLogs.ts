@@ -7,6 +7,7 @@ async function GetAllFishLogs(token: string, query: string) {
   
   const userToken = `Bearer ${token}`;
   const res = await fishLogService.get(route, {
+    timeout: 1000000,
     headers: { Authorization: userToken },
   });
   return res.data as any;

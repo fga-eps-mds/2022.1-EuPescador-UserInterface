@@ -14,6 +14,9 @@ import { AuthProvider } from './src/contexts/authContext';
 import Navigation from './src/navigation/navigation';
 
 import theme from './src/global/styles/theme';
+import { MMKV } from 'react-native-mmkv'
+
+export const storage = new MMKV();
 
 export default function App() {
   const [fontLoaded] = useFonts({

@@ -24,6 +24,7 @@ import { ExportFishLogs } from "../../services/fishLogService/exportFishLogs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NoFishImagePhoto } from "../../components/NoFishImagePhoto";
 import MapView, { Marker } from "react-native-maps";
+import { storage } from "../../../App";
 
 export const FishLog = ({ navigation, route }: any) => {
   const [fishName, setFishName] = useState();
@@ -51,11 +52,11 @@ export const FishLog = ({ navigation, route }: any) => {
   const connection = NetInfo.useNetInfo();
 
   const getData = async () => {
-    const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
-    const userSuperAdmin = await AsyncStorage.getItem(
+    const userAdmin = await storage.getString("@eupescador/userAdmin");
+    const userSuperAdmin = await storage.getString(
       "@eupescador/userSuperAdmin"
     );
-    const token = await AsyncStorage.getItem("@eupescador/token");
+    const token = await storage.getString("@eupescador/token");
     if (token) {
       getFishLogProperties(token);
       setUserToken(token);
@@ -147,8 +148,10 @@ export const FishLog = ({ navigation, route }: any) => {
     setIsLoading(true);
 
     let log;
+    console.log('antes')
     try {
       if (connection.isConnected) {
+        console.log('caiu aqui')
         const { log_id } = route.params;
         setLogId(log_id);
         log = await GetOneFishLog(log_id, token);

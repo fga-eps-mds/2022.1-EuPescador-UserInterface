@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Buffer } from "buffer";
+import { storage } from "../../../App";
 import { fishLogService } from "./fishService";
 
 export const createFishLog = async (
@@ -14,8 +15,8 @@ export const createFishLog = async (
   longitude: string | undefined,
   visible: boolean
 ) => {
-  const userId = await AsyncStorage.getItem('@eupescador/userId');
-  const token = await AsyncStorage.getItem('@eupescador/token');
+  const userId = await storage.getString('@eupescador/userId');
+  const token = await storage.getString('@eupescador/token');
   let photo = null;
 
   const coordenates = {

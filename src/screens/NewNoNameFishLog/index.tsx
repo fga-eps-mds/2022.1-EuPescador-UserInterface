@@ -38,6 +38,7 @@ import {
   AddLocaleButtonIcon,
   NewFishlogScroll,
 } from "./styles";
+import { storage } from "../../../App";
 
 export interface IFish {
   _id: string;
@@ -107,11 +108,11 @@ export function NewNoNameFishLog({ navigation, route }: any) {
   };
 
   const getData = async () => {
-    const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
-    const userSuperAdmin = await AsyncStorage.getItem(
+    const userAdmin = await storage.getString("@eupescador/userAdmin");
+    const userSuperAdmin = await storage.getString(
       "@eupescador/userSuperAdmin"
     );
-    const token = await AsyncStorage.getItem("@eupescador/token");
+    const token = await storage.getString("@eupescador/token");
     if (token) {
       getFishLogProperties(token);
     }
@@ -257,11 +258,11 @@ export function NewNoNameFishLog({ navigation, route }: any) {
 
   const deleteDraft = async () => {
     if (isDraft) {
-      const drafts = await AsyncStorage.getItem("drafts");
+      const drafts = await storage.getString("drafts");
       if (drafts) {
         let draftList: [] = JSON.parse(drafts);
         if (draftId) draftList.splice(parseInt(draftId), 1);
-        await AsyncStorage.setItem("drafts", JSON.stringify(draftList));
+        await storage.set("drafts", JSON.stringify(draftList));
       }
     }
   };
@@ -287,7 +288,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
         alertMessage = "Registro criado com sucesso!";
         await deleteDraft();
       } else {
-        const userId = await AsyncStorage.getItem("@eupescador/userId");
+        const userId = await storage.getString("@eupescador/userId");
         const coordenates = {
           latitude: parseFloat(fishLatitude!),
           longitude: parseFloat(fishLongitude!),
@@ -304,19 +305,19 @@ export function NewNoNameFishLog({ navigation, route }: any) {
           coordenates,
         };
 
-        const response = await AsyncStorage.getItem("@eupescador/newfish");
+        const response = await storage.getString("@eupescador/newfish");
 
         let listFish = [];
         if (response) {
           listFish = JSON.parse(response);
           listFish.push(fish);
-          await AsyncStorage.setItem(
+          await storage.set(
             "@eupescador/newfish",
             JSON.stringify(listFish)
           );
         } else {
           listFish.push(fish);
-          await AsyncStorage.setItem(
+          await storage.set(
             "@eupescador/newfish",
             JSON.stringify(listFish)
           );
@@ -396,7 +397,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
 
   const saveDraft = async () => {
     setIsLoading(true);
-    let drafts = await AsyncStorage.getItem("drafts");
+    let drafts = await storage.getString("drafts");
     const newDraft = {
       photoString: fishPhoto,
       name: fishName,
@@ -423,7 +424,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
     } else {
       newDrafts = [newDraft];
     }
-    await AsyncStorage.setItem("drafts", JSON.stringify(newDrafts));
+    await storage.set("drafts", JSON.stringify(newDrafts));
     setIsLoading(false);
     const resetAction = CommonActions.reset({
       index: 0,

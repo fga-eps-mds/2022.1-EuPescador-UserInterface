@@ -21,6 +21,7 @@ import { InstructionModal } from '../../components/InstructionsModal';
 import {UsersManager} from "../../components/UsersManager";
 
 import { LogsMap } from '../LogsMap';
+import { storage } from '../../../App';
 
 export const WikiFishlogs = ({ navigation, route }: any) => {
 
@@ -37,9 +38,9 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
   const { signOut } = useAuth();
 
   const getData = async () => {
-    const userAdmin = await AsyncStorage.getItem("@eupescador/userAdmin");
-    const userSuperAdmin = await AsyncStorage.getItem('@eupescador/userSuperAdmin');
-    const token = await AsyncStorage.getItem('@eupescador/token');
+    const userAdmin = await storage.getString("@eupescador/userAdmin");
+    const userSuperAdmin = await storage.getString('@eupescador/userSuperAdmin');
+    const token = await storage.getString('@eupescador/token');
     if (token) {
       setToken(token);
       setIsLogged(true);
@@ -79,10 +80,10 @@ export const WikiFishlogs = ({ navigation, route }: any) => {
   };
 
   const getFirstAcess = async () => {
-    const hasAcessTheApp = await AsyncStorage.getItem('hasAcessTheApp');
+    const hasAcessTheApp = await storage.getString('hasAcessTheApp');
     if (hasAcessTheApp === 'false') {
       setShowModal(true);
-      await AsyncStorage.setItem('hasAcessTheApp', 'true');
+      await storage.set('hasAcessTheApp', 'true');
     }
   }
 
