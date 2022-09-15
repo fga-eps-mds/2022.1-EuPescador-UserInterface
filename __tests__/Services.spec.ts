@@ -3,6 +3,8 @@ import { GetAllFishLogs} from '../src/services/fishLogService/getAllLogs'
 import { GetOneFishLog } from '../src/services/fishLogService/getOneFishLog'
 import { UpdateFishLog } from '../src/services/fishLogService/updateFishLog'
 import { GetAllUsers } from '../src/services/userServices/getAllUsers'
+import { GetWikiFishes } from '../src/services/wikiServices/getWikiFishes'
+import { GetOneWikiFish } from '../src/services/wikiServices/getOneWikiFish'
 
 let novoPeixe = {
   name : "testeUpdate",
@@ -23,6 +25,15 @@ describe('AllFishLog Service Test', () => {
   it('Recuperar todos os logs', async () => {
     await UserLogin('lulu@gmail.com', '702200').then(async (response) => {
       await GetAllFishLogs(response.data.token, '').then((res) => {
+        expect(res.length).toBeGreaterThanOrEqual(1)
+      })
+    })
+  }, 700000)
+
+
+  it('Recuperar um log', async () => {
+    await UserLogin('lulu@gmail.com', '702200').then(async (response) => {
+      await GetAllFishLogs(response.data.token, '1').then((res) => {
         expect(res.length).toBeGreaterThanOrEqual(1)
       })
     })
@@ -75,4 +86,36 @@ describe('Login Test', () => {
       expect(res.status).toEqual(200)
     })
   }, 7000)
+})
+
+describe('Get Wiki Fishes Test', () => {
+  it('Recupera os peixes da Wiki', async () => {
+    await GetWikiFishes().then((res) => {
+      expect(res.length).toBeGreaterThanOrEqual(1)
+    })
+  }, 7000)
+
+
+  it('Recupera um peixe da Wiki', async () => {
+    await GetWikiFishes('1').then((res) => {
+      expect(res.id).toEqual(1)
+    })
+  }, 7000)
+
+})
+
+describe('Get One Wiki Fish Test', () => {
+  it('Recupera os peixes da Wiki', async () => {
+    await GetOneWikiFish('1').then((res) => {
+      expect(res.id).toEqual(1)
+    })
+  }, 7000)
+
+
+  it('Recupera um peixe da Wiki', async () => {
+    await GetOneWikiFish('2').then((res) => {
+      expect(res.id).toEqual(2)
+    })
+  }, 7000)
+
 })
