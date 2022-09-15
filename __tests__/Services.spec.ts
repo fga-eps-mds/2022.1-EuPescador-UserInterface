@@ -2,6 +2,7 @@ import { UserLogin } from '../src/services/userServices/login'
 import { GetAllFishLogs} from '../src/services/fishLogService/getAllLogs'
 import { GetOneFishLog } from '../src/services/fishLogService/getOneFishLog'
 import { UpdateFishLog } from '../src/services/fishLogService/updateFishLog'
+import { GetAllUsers } from '../src/services/userServices/getAllUsers'
 
 let novoPeixe = {
   name : "testeUpdate",
@@ -57,3 +58,21 @@ describe('OneFishLog Test', () => {
     })
   }, 700000)
 })*/
+
+describe('Get Users Test', () => {
+  it('Recupera um user', async () => {
+    await UserLogin('lulu@gmail.com', '702200').then(async (response) => {
+      await GetAllUsers().then((res) => {
+        expect(res.length).toBeGreaterThanOrEqual(1)
+      })
+    })
+  }, 7000)
+})
+
+describe('Login Test', () => {
+  it('Efetua o login', async () => {
+    await UserLogin('lulu@gmail.com', '702200').then((res) => {
+      expect(res.status).toEqual(200)
+    })
+  }, 7000)
+})
