@@ -5,7 +5,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --coverage",
+    "test": "jest --ci --coverage --testLocationInResults",
     "lint": "eslint '.' --ext .ts --ext .tsx --fix"
   },
   "dependencies": {
