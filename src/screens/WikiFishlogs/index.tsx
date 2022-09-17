@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import { TopBar } from '../../components/TopBar';

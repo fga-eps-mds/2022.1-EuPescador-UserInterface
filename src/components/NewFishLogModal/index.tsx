@@ -16,7 +16,7 @@ interface ModalProps {
 
 export const NewFishLogModal = ({ modalVisible, dismissModal, navigation }: ModalProps) => {
     const [modalDescriptions, setModalDescriptions] = useState([
-        "Você conhece o nome científico do peixe que pescou?\n\n",
+        "Você conhece o nome do peixe que pescou?\n\n",
     ]);
 
     const handleAddLog = async () => {
