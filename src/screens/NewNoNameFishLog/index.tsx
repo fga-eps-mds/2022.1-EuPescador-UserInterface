@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Buffer } from "buffer";
 import {
   Alert,
@@ -76,7 +76,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [fishes, setFishes] = useState<IFish[]>([]);
   const [fishPhoto, setFishPhoto] = useState<string | undefined | undefined>();
-  const [fishName, setFishName] = useState<string | undefined>();
+  const [fishName, setFishName] = useState<string | undefined>(",");
   const [fishLargeGroup, setFishLargeGroup] = useState<string | undefined>("");
   const [fishGroup, setFishGroup] = useState<string | undefined>();
   const [fishSpecies, setFishSpecies] = useState<string | undefined>();
@@ -92,7 +92,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
   const [draftId, setDraftId] = useState<string | null>(null);
   const [fishFamily, setFishFamily] = useState<string | undefined>();
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const netInfo = useNetInfo();
+  const [showName, setShowName] = useState<boolean>(false);
   const isOn = useNetInfo().isConnected;
   const getFishOptions = async () => {
     let newFishes: IFish[] = [];
@@ -524,11 +524,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
         }
       })
       .map((item, index) => {
-        return (
-          <OptionListItem key={index} onPress={() => setFishProps(item)}>
-            <RegularText text={item.commonName} />
-          </OptionListItem>
-        );
+        return item.commonName;
       });
   };
 
@@ -565,6 +561,9 @@ export function NewNoNameFishLog({ navigation, route }: any) {
       return item;
     });
   };
+
+  const dropdownRef = useRef<SelectDropdown>(null);
+  const dropdownRefGroup = useRef<SelectDropdown>(null);
 
   return (
     <NewFishLogContainer>
@@ -621,6 +620,9 @@ export function NewNoNameFishLog({ navigation, route }: any) {
                 setFishLargeGroup(item);
                 setDropLargeGroup(false);
                 setDropGroup(true);
+                dropdownRef?.current?.reset();
+                dropdownRefGroup?.current?.reset();
+                setFishName("");
               }}
               buttonTextAfterSelection={(selectedItem, index) => {
                 return selectedItem;
@@ -652,8 +654,10 @@ export function NewNoNameFishLog({ navigation, route }: any) {
                 dropdownStyle={styles.dropdown2DropdownStyle}
                 rowStyle={styles.dropdown2RowStyle}
                 rowTextStyle={styles.dropdown2RowTxtStyle}
+                ref={dropdownRefGroup}
                 onSelect={(item) => {
                   setFishGroup(item);
+                  setShowName(true);
                 }}
                 buttonTextAfterSelection={(selectedItem, index) => {
                   return selectedItem;
@@ -663,48 +667,32 @@ export function NewNoNameFishLog({ navigation, route }: any) {
                 }}
               />
             ) : null}
-
-            <InputView>
-              <Input
-                placeholder="Nome"
-                value={fishName}
-                onChangeText={setFishName}
+            {showName ? (
+              <SelectDropdown
+                data={nameList()}
+                defaultButtonText={fishName !== "" ? fishName : "Nome"}
+                buttonStyle={styles.dropdown2BtnStyle}
+                buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                dropdownStyle={styles.dropdown2DropdownStyle}
+                rowTextStyle={styles.dropdown2RowTxtStyle}
+                ref={dropdownRef}
+                onSelect={(item) => {
+                  fishes.filter((res) => {
+                    if (
+                      res.commonName
+                        .toLowerCase()
+                        .includes(item!.toLowerCase().trim())
+                    )
+                      return setFishProps(res);
+                  });
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
+                }}
               />
-              <InputBox />
-            </InputView>
-            {fishName &&
-            fishes.filter((item) => {
-              if (
-                item.commonName
-                  .toLowerCase()
-                  .includes(fishName.toLowerCase().trim()) &&
-                item.commonName.toLowerCase() != fishName.toLowerCase().trim()
-              ) {
-                if (fishGroup) {
-                  if (
-                    item.group.toLowerCase().includes(fishGroup.toLowerCase())
-                  ) {
-                    return item;
-                  }
-                } else if (fishLargeGroup) {
-                  if (
-                    item.largeGroup
-                      .toLowerCase()
-                      .includes(fishLargeGroup.toLowerCase())
-                  ) {
-                    return item;
-                  }
-                } else return item;
-              }
-            }).length ? (
-              <OptionsContainer>
-                <OptionList
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator
-                >
-                  {nameList()}
-                </OptionList>
-              </OptionsContainer>
             ) : null}
 
             <BoxView>
@@ -798,10 +786,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderColor: "#444",
   },
-  dropdown2BtnTxtStyle:  { color: "#444", textAlign: "left", fontSize: 16 },
-  dropdown2DropdownStyle:{ backgroundColor: "#EFEFEF" },
-  dropdown2RowStyle:{ color: "#444", textAlign: "left" },
-  dropdown2RowTxtStyle:  {
+  dropdown2BtnTxtStyle: { color: "#444", textAlign: "left", fontSize: 16 },
+  dropdown2DropdownStyle: { backgroundColor: "#EFEFEF" },
+  dropdown2RowStyle: { color: "#444", textAlign: "left" },
+  dropdown2RowTxtStyle: {
     backgroundColor: "#EFEFEF",
     borderBottomColor: "#C5C5C5",
   },

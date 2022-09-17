@@ -10,7 +10,7 @@ import {
   DescriptionContainer,
   RegisterButtonView,
 } from "./styles";
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from "react-native";
 import { Property } from "../../components/Property";
 import { Title } from "../../components/Title";
 import { HalfToneText } from "../../components/HalfToneText";
@@ -138,7 +138,7 @@ export const FishLog = ({ navigation, route }: any) => {
       const file: any = await ExportFishLogs(userToken, [logId]);
       saveFile(file);
     } catch (error: any) {
-      console.log('Aqui: ');
+      console.log("Aqui: ");
       console.log(error);
     }
     setIsLoading(false);
@@ -148,10 +148,10 @@ export const FishLog = ({ navigation, route }: any) => {
     setIsLoading(true);
 
     let log;
-    console.log('antes')
+    console.log("antes");
     try {
       if (connection.isConnected) {
-        console.log('caiu aqui')
+        console.log("caiu aqui");
         const { log_id } = route.params;
         setLogId(log_id);
         log = await GetOneFishLog(log_id, token);
@@ -228,21 +228,27 @@ export const FishLog = ({ navigation, route }: any) => {
               value={fishWeight ? fishWeight.toString() : "Não informado"}
             />
           </PropertyRow>
-          {lat || lng !== null ?   <MapView
-        style={{ alignSelf: 'stretch', height: 200, margin: 20 }}
-        initialRegion={{
-          latitude: lat  !== null ? lat : 0.0,
-          longitude:  lng !== null ? lng : 0.0,
-        }}
-      >
-           <Marker
-            coordinate={{latitude: lat ? lat : 0.0,
-            longitude: lng ? lng : 0.0}}
-            title='titulo'
-            description='grupo'
-         />
-      </MapView> : null}
-        
+          {lat || lng !== null ? (
+            <MapView
+              style={{ alignSelf: "stretch", height: 200, margin: 20 }}
+              initialRegion={{
+                latitude: lat !== null ? lat : 0.0,
+                longitude: lng !== null ? lng : 0.0,
+                latitudeDelta: 0.04,
+                longitudeDelta: 0.05,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: lat ? lat : 0.0,
+                  longitude: lng ? lng : 0.0,
+                }}
+                title="titulo"
+                description="grupo"
+              />
+            </MapView>
+          ) : null}
+
           {connection.isConnected ? (
             <RegisterButtonView>
               {isAdmin || isSuperAdmin ? (

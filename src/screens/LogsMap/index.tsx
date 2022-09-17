@@ -45,8 +45,8 @@ export const LogsMap = ({
           initialRegion={{
             latitude: -15.7801,
             longitude: -47.9292,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.05,
           }}
           maxZoomLevel={14.8}
         >
