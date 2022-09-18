@@ -232,8 +232,8 @@ export const FishLog = ({ navigation, route }: any) => {
             <MapView
               style={{ alignSelf: "stretch", height: 200, margin: 20 }}
               initialRegion={{
-                latitude: lat !== null ? lat : 0.0,
-                longitude: lng !== null ? lng : 0.0,
+                latitude: lat ? lat : 0.0,
+                longitude: lng ? lng : 0.0,
                 latitudeDelta: 0.04,
                 longitudeDelta: 0.05,
               }}
