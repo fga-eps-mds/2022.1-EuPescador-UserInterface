@@ -75,6 +75,7 @@ export function NewNoNameFishLog({ navigation, route }: any) {
   const [isSuperAdmin, setIsSuperAdmin] = useState<Boolean>(false);
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [fishes, setFishes] = useState<IFish[]>([]);
+  const [offFishes, setOffFishes] = useState<IFish[]>([]);
   const [fishPhoto, setFishPhoto] = useState<string | undefined | undefined>();
   const [fishName, setFishName] = useState<string | undefined>(",");
   const [fishLargeGroup, setFishLargeGroup] = useState<string | undefined>("");
@@ -103,10 +104,16 @@ export function NewNoNameFishLog({ navigation, route }: any) {
           newFishes.push(wikiData[i]);
         }
       }
+      await storage.set("@eupescador/FishesNames", JSON.stringify(newFishes));
       setFishes(newFishes);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getOfflineFishOptions = async () => {
+    const newFishes: any = storage.getString("@eupescador/FishesNames");
+    setFishes(JSON.parse(newFishes));
   };
 
   const setFishProps = async (fish: IFish) => {
@@ -536,6 +543,9 @@ export function NewNoNameFishLog({ navigation, route }: any) {
     }
   };
 
+  useEffect(() => {
+    isOn ? console.log("on") : getOfflineFishOptions();
+  }, []);
   useEffect(() => {
     loadData();
   }, [route.params]);
