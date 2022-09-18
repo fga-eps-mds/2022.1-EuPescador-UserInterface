@@ -1,4 +1,6 @@
 package com.eupescador.app;
+import expo.modules.updates.UpdatesDevLauncherController;
+import expo.modules.devlauncher.DevLauncherController;
 
 import android.app.Application;
 import android.content.Context;
@@ -60,6 +62,10 @@ public class MainApplication extends Application implements ReactApplication {
     long size = 50L * 1024L * 1024L; // 50 MB
     com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
 
+    DevLauncherController.initialize(this, getReactNativeHost());
+    if (BuildConfig.DEBUG) {
+      DevLauncherController.getInstance().setUpdatesInterface(UpdatesDevLauncherController.initialize(this));
+    }
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     ApplicationLifecycleDispatcher.onApplicationCreate(this);
   }

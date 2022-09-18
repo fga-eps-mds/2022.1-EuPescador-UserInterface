@@ -93,6 +93,7 @@ export function NewFishLog({ navigation, route }: any) {
           newFishes.push(wikiData[i]);
         }
       }
+      await storage.set("@eupescador/FishesNames", JSON.stringify(newFishes));
       setFishes(newFishes);
     } catch (error) {
       console.log(error);
@@ -129,6 +130,11 @@ export function NewFishLog({ navigation, route }: any) {
       setIsSuperAdmin(false);
       setCanEdit(false);
     }
+  };
+
+  const getOfflineFishOptions = async () => {
+    const newFishes: any = storage.getString("@eupescador/FishesNames");
+    setFishes(JSON.parse(newFishes));
   };
 
   const getFishLogProperties = async (token: string) => {
@@ -529,6 +535,10 @@ export function NewFishLog({ navigation, route }: any) {
       setFishFamily(fish.family);
     }
   };
+
+  useEffect(() => {
+    isOn ? console.log("on") : getOfflineFishOptions();
+  }, []);
 
   useEffect(() => {
     loadData();
